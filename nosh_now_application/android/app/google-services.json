@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "995957647106",
+    "project_id": "nosh-62d66",
+    "storage_bucket": "nosh-62d66.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:995957647106:android:056bdbf2b2bc49e1c0441b",
+        "android_client_info": {
+          "package_name": "com.example.nosh_now_application"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCrmF5jo5AbozoQkrxffBJE6uwRT6488s8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
