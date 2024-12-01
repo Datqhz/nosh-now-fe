@@ -7,6 +7,7 @@ import 'package:management_app/data/requests/get_orders_request.dart';
 import 'package:management_app/data/responses/get_orders_response.dart';
 import 'package:management_app/presentation/screens/restaurant/order_detail_screen.dart';
 import 'package:management_app/presentation/widget/order_item.dart';
+
 class ManageOrderScreen extends StatefulWidget {
   const ManageOrderScreen({super.key});
 
@@ -298,7 +299,7 @@ class _ManageOrderScreenState extends State<ManageOrderScreen>
                     color: Color.fromRGBO(240, 240, 240, 1),
                   ),
                   child: TabBar(
-                    onTap: (index) async{
+                    onTap: (index) async {
                       orders.value = [];
                       print('tab tapped');
                       await fetchData();

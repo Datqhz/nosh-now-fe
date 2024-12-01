@@ -1,6 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:management_app/presentation/screens/profile_screen.dart';
+import 'package:management_app/presentation/screens/restaurant/food_management_screen.dart';
+import 'package:management_app/presentation/screens/restaurant/manage_order_screen.dart';
+import 'package:management_app/presentation/screens/restaurant/restaurant_dashboard_screen.dart';
 import 'package:management_app/presentation/widget/bottom_bar.dart';
 import 'package:management_app/presentation/widget/bottom_bar_item.dart';
 import 'package:management_app/presentation/widget/drawer.dart';
@@ -14,7 +17,6 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   late List<GlobalKey<BottomBarItemState>> bottomBarItemKeys = [];
-
   late List<dynamic> bottomBarItems = [];
   final ValueNotifier<int> _bottomIdx = ValueNotifier(0);
 
@@ -28,25 +30,29 @@ class _MainScreenState extends State<MainScreen> {
 
   Widget _replaceScreenByBottomBarIndex(int idx) {
     if (idx == 0) {
-          return ProfileScreen();
-        } else if (idx == 1) {
-          return SizedBox(); // list notification
-        } else if (idx == 2) {
-          return  ProfileScreen(); // management order
-        }
-        return ProfileScreen();
+      return RestaurantDashboardScreen();
+    } else if (idx == 1) {
+      return const SizedBox(); // list notification
+    } else if (idx == 2) {
+      return  const FoodManagementScreen(); // management order
+    }
+    else if (idx == 3) {
+      return  const ManageOrderScreen(); // management order
+    }
+    return ProfileScreen();
   }
 
   @override
   void initState() {
     super.initState();
     bottomBarItemKeys = List.generate(
-          4,
+          5,
           (index) => GlobalKey<BottomBarItemState>(),
         );
         bottomBarItems = [
           CupertinoIcons.home,
           CupertinoIcons.bell,
+          'assets/images/wok_100_white.png',
           CupertinoIcons.layers_alt,
           CupertinoIcons.person
         ];
@@ -64,7 +70,7 @@ class _MainScreenState extends State<MainScreen> {
       body: SafeArea(
         child: Stack(
           children: [
-            ValueListenableBuilder(
+            ValueListenableBuilder( 
               valueListenable: _bottomIdx,
               builder: (context, value, child) {
                 return _replaceScreenByBottomBarIndex(value);
@@ -78,7 +84,7 @@ class _MainScreenState extends State<MainScreen> {
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 32),
                 child: BottomBar(
-                  items: List.generate(4, (index) {
+                  items: List.generate(5, (index) {
                     return BottomBarItem(
                       key: bottomBarItemKeys[index],
                       idx: index,

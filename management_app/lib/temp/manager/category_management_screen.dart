@@ -4,6 +4,8 @@
 // import 'package:flutter/material.dart';
 // import 'package:flutter_spinkit/flutter_spinkit.dart';
 // import 'package:image_picker/image_picker.dart';
+// import 'package:management_app/data/providers/category_list_provider.dart';
+// import 'package:management_app/presentation/widget/category_management_item.dart';
 // import 'package:provider/provider.dart';
 
 // class CategoryManagementScreen extends StatefulWidget {
@@ -22,7 +24,7 @@
 //   @override
 //   void initState() {
 //     super.initState();
-//     Provider.of<CategoryListProvider>(context, listen: false).fetchCategories();
+//     Provider.of<CategoryListProvider>(context, listen: false).fetchCategories(context);
 //   }
 
 //   @override

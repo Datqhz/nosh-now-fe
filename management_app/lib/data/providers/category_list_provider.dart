@@ -17,7 +17,7 @@ class CategoryListProvider with ChangeNotifier {
       notifyListeners(); 
     }
   }
-  void deleteCategory(int id) {
+  void deleteCategory(String id) {
     final index = _categories.indexWhere((category) => category.categoryId == id);
     if (index != -1) {
       _categories.removeAt(index);

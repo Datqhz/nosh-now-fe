@@ -2,6 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:management_app/core/constants/global_variable.dart';
 import 'package:management_app/data/providers/user_state_provider.dart';
+import 'package:management_app/presentation/screens/restaurant/ingredient_management_screen.dart';
+import 'package:management_app/presentation/widget/drawer_item.dart';
 import 'package:provider/provider.dart';
 
 class MyDrawer extends StatefulWidget {
@@ -84,10 +86,10 @@ class _MyDrawerState extends State<MyDrawer> {
                           border: Border.all(color: Colors.black, width: 1),
                           borderRadius: BorderRadius.circular(50)),
                       child: CircleAvatar(
-                        backgroundColor: Colors.white,
-                        radius: 50,
-                        backgroundImage: NetworkImage(GlobalVariable.profile!.avatar)
-                      ),
+                          backgroundColor: Colors.white,
+                          radius: 50,
+                          backgroundImage:
+                              NetworkImage(GlobalVariable.profile!.avatar)),
                     ),
                     GestureDetector(
                       onTap: () {
@@ -193,7 +195,37 @@ class _MyDrawerState extends State<MyDrawer> {
                 ),
               ],
             ),
-          )
+          ),
+          DrawerItem(
+              icon: CupertinoIcons.calendar,
+              title: 'Calendar',
+              onTap: () => Container(
+                    width: 100,
+                    height: 100,
+                    color: Colors.blue,
+                  )),
+          DrawerItem(
+              icon: CupertinoIcons.calendar,
+              title: 'Ingredient',
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            const IngredientManagementScreen()));
+              }),
+          DrawerItem(
+              icon: CupertinoIcons.person_2,
+              title: 'Employee',
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            const IngredientManagementScreen()));
+              })
         ],
       ),
     );

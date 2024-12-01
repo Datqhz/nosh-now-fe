@@ -1,148 +1,165 @@
-// import 'dart:convert';
+import 'dart:convert';
 
-// import 'package:flutter/material.dart';
-// import 'package:http/http.dart';
-// import 'package:management_app/core/constants/global_variable.dart';
-// import 'package:management_app/core/utils/snack_bar.dart';
+import 'package:flutter/material.dart';
+import 'package:http/http.dart';
+import 'package:management_app/core/constants/global_variable.dart';
+import 'package:management_app/core/utils/snack_bar.dart';
+import 'package:management_app/data/models/food_data.dart';
+import 'package:management_app/data/requests/create_food_request.dart';
+import 'package:management_app/data/requests/update_food_request.dart';
+import 'package:management_app/data/responses/create_food_response.dart';
+import 'package:management_app/data/responses/get_food_byid_response.dart';
+import 'package:management_app/data/responses/get_foods_response.dart';
+import 'package:management_app/data/responses/update_food_response.dart';
 
-// class FoodRepository {
+class FoodRepository {
 
 
-//   Future<List<GetFoodsData>> getFoodByRestaurantId(String restaurantId, BuildContext context) async {
-//     Map<String, String> headers = {
-//       'Content-Type': 'application/json; charset=UTF-8',
-//       "Authorization": "Bearer ${GlobalVariable.jwt}"
-//     };
-//     try {
-//       Response response = await get(
-//           Uri.parse("${GlobalVariable.url}/order/api/v1/Food/Foods/$restaurantId"),
-//           headers: headers);
+  Future<List<FoodData>> getFoodByRestaurantId(String restaurantId, BuildContext context) async {
+    Map<String, String> headers = {
+      'Content-Type': 'application/json; charset=UTF-8',
+      "Authorization": "Bearer ${GlobalVariable.jwt}"
+    };
+    try {
+      Response response = await get(
+          Uri.parse("${GlobalVariable.url}/order/api/v1/Food/Foods/$restaurantId"),
+          headers: headers);
 
-//       Map<String, dynamic> data = json.decode(response.body);
-//       var responseData = GetFoodsByRestaurantResponse.fromJson(data);
-//       int statusCode = response.statusCode;
+      Map<String, dynamic> data = json.decode(response.body);
+      var responseData = GetFoodsResponse.fromJson(data);
+      int statusCode = response.statusCode;
 
-//       if (statusCode == 200) {
-//         return responseData.data!;
-//       }
+      if (statusCode == 200) {
+        return responseData.data!;
+      }
 
-//       showSnackBar(context, responseData.statusText!);
-//       return [];
-//     } catch (e) {
+      showSnackBar(context, responseData.statusText!);
+      return [];
+    } catch (e) {
 
-//       showSnackBar(context, "An error has occured");
-//       print(e.toString());
-//       return [];
-//     }
-//   }
+      showSnackBar(context, "An error has occured");
+      print(e.toString());
+      return [];
+    }
+  }
 
-//   Future<GetFoodByIdData?> getFoodById(int foodId, BuildContext context) async {
-//     Map<String, String> headers = {
-//       'Content-Type': 'application/json; charset=UTF-8',
-//       "Authorization": "Bearer ${GlobalVariable.jwt}"
-//     };
-//     try {
-//       Response response = await get(
-//           Uri.parse("${GlobalVariable.url}/order/api/v1/Food/$foodId"),
-//           headers: headers);
 
-//       Map<String, dynamic> data = json.decode(response.body);
-//       var responseData = GetFoodByIdResponse.fromJson(data);
-//       int statusCode = response.statusCode;
+  Future<GetFoodByIdData?> getFoodById(int foodId, BuildContext context) async {
+    Map<String, String> headers = {
+      'Content-Type': 'application/json; charset=UTF-8',
+      "Authorization": "Bearer ${GlobalVariable.jwt}"
+    };
+    try {
+      Response response = await get(
+          Uri.parse("${GlobalVariable.url}/order/api/v1/Food/$foodId"),
+          headers: headers);
 
-//       if (statusCode == 200) {
-//         return responseData.data;
-//       }
+      Map<String, dynamic> data = json.decode(response.body);
+      var responseData = GetFoodByIdResponse.fromJson(data);
+      int statusCode = response.statusCode;
 
-//       showSnackBar(context, responseData.statusText!);
-//       return null;
-//     } catch (e) {
+      if (statusCode == 200) {
+        return responseData.data;
+      }
 
-//       showSnackBar(context, "An error has occurred");
-//       print(e.toString());
-//       return null;
-//     }
-//   }
+      showSnackBar(context, responseData.statusText!);
+      return null;
+    } catch (e) {
 
-//   // merchant
-//   Future<Food?> create(Food food, int merchantId) async {
-//     Map<String, String> headers = {
-//       'Content-Type': 'application/json; charset=UTF-8',
-//       "Authorization": "Bearer ${GlobalVariable.jwt}"
-//     };
-//     try {
-//       Response response =
-//           await post(Uri.parse("${GlobalVariable.url}/api/food"),
-//               headers: headers,
-//               body: jsonEncode(<String, dynamic>{
-//                 "foodName": food.foodName,
-//                 "foodImage": food.foodImage,
-//                 "foodDescribe": food.foodDescribe,
-//                 "price": food.price,
-//                 "status": food.status,
-//                 "merchantId": merchantId
-//               }));
-//       int statusCode = response.statusCode;
-//       if (statusCode != 201) {
-//         print(response.body);
-//         return null;
-//       }
-//       return Food.fromJson(json.decode(response.body));
-//     } catch (e) {
-//       print(e.toString());
-//       throw Exception('Fail to save food');
-//     }
-//   }
+      showSnackBar(context, "An error has occurred");
+      print(e.toString());
+      return null;
+    }
+  }
 
-//   // merchant
-//   Future<Food> update(Food food, int merchantId) async {
-//     Map<String, String> headers = {
-//       'Content-Type': 'application/json; charset=UTF-8',
-//       "Authorization": "Bearer ${GlobalVariable.jwt}"
-//     };
-//     try {
-//       Response response = await put(Uri.parse("${GlobalVariable.url}/api/food"),
-//           headers: headers,
-//           body: jsonEncode(<String, dynamic>{
-//             "id": food.foodId,
-//             "foodName": food.foodName,
-//             "foodImage": food.foodImage,
-//             "foodDescribe": food.foodDescribe,
-//             "price": food.price,
-//             "status": food.status,
-//           }));
-//       int statusCode = response.statusCode;
-//       if (statusCode != 200) {
-//         print(response.body);
-//         throw Exception();
-//       }
-//       return Food.fromJson(json.decode(response.body));
-//     } catch (e) {
-//       print(e.toString());
-//       throw Exception('Fail to save food');
-//     }
-//   }
+  Future<int?> createFood(CreateFoodRequest request, BuildContext context) async {
+    Map<String, String> headers = {
+      'Content-Type': 'application/json; charset=UTF-8',
+      "Authorization": "Bearer ${GlobalVariable.jwt}"
+    };
+    try {
+      Response response =
+          await post(Uri.parse("${GlobalVariable.url}/order/api/v1/Food"),
+              headers: headers,
+              body: jsonEncode(request.toJson()));
+       Map<String, dynamic> data = json.decode(response.body);
+      var responseData = CreateFoodResponse.fromJson(data);
+      int statusCode = response.statusCode;
 
-//   //merchant
-//   Future<bool> deleteFood(int id) async {
-//     Map<String, String> headers = {
-//       'Content-Type': 'application/json; charset=UTF-8',
-//       "Authorization": "Bearer ${GlobalVariable.jwt}"
-//     };
-//     try {
-//       Response response = await delete(
-//         Uri.parse("${GlobalVariable.url}/api/food/$id"),
-//         headers: headers,
-//       );
-//       int statusCode = response.statusCode;
-//       if (statusCode != 200) {
-//         print(response.body);
-//         return false;
-//       }
-//       return true;
-//     } catch (e) {
-//       print(e.toString());
-//       throw Exception('Fail to delete food');
-//     }
-//   }
-// }
+      if (statusCode == 200) {
+        showSnackBar(context, "Create successful!");
+        return responseData.data!;
+      }
+
+      showSnackBar(context, responseData.statusText!);
+    } catch (e) {
+
+      showSnackBar(context, "An error has occurred");
+      print(e.toString());
+
+    }
+
+    return null;
+  }
+
+  Future<bool> updateFood(UpdateFoodRequest request, BuildContext context) async {
+    Map<String, String> headers = {
+      'Content-Type': 'application/json; charset=UTF-8',
+      "Authorization": "Bearer ${GlobalVariable.jwt}"
+    };
+    try {
+      Response response = await put(Uri.parse("${GlobalVariable.url}/order/api/v1/Food"),
+          headers: headers,
+          body: jsonEncode(request.toJson()));
+
+
+      Map<String, dynamic> data = json.decode(response.body);
+      var responseData = UpdateFoodResponse.fromJson(data);
+      int statusCode = response.statusCode;
+
+      if (statusCode == 200) {
+        showSnackBar(context, "Update successful!");
+        return true;
+      }
+
+      showSnackBar(context, responseData.statusText!);
+    } catch (e) {
+
+      showSnackBar(context, "An error has occured");
+      print(e.toString());
+    }
+
+    return false;
+  }
+
+  //merchant
+  Future<bool> deleteFood(int id, BuildContext context) async {
+    Map<String, String> headers = {
+      'Content-Type': 'application/json; charset=UTF-8',
+      "Authorization": "Bearer ${GlobalVariable.jwt}"
+    };
+    try {
+      Response response = await delete(
+        Uri.parse("${GlobalVariable.url}/order/api/v1/food/$id"),
+        headers: headers,
+      );
+      
+      Map<String, dynamic> data = json.decode(response.body);
+      var responseData = UpdateFoodResponse.fromJson(data);
+      int statusCode = response.statusCode;
+
+      if (statusCode == 200) {
+        showSnackBar(context, "Delete successful");
+        return true;
+      }
+
+      showSnackBar(context, responseData.statusText!);
+    } catch (e) {
+
+      showSnackBar(context, "An error has occurred");
+      print(e.toString());
+    }
+
+    return false;
+  }
+}
