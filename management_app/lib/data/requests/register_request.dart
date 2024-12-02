@@ -4,17 +4,19 @@ class RegisterRequest {
   String password;
   String role;
   String phoneNumber;
-  String coordinate;
-  String avatar;
+  String? coordinate;
+  String? avatar;
+  String? restaurantId;
 
   RegisterRequest({
     required this.displayname,
     required this.userName,
     required this.password,
     required this.phoneNumber,
-    required this.avatar,
-    required this.coordinate,
-    required this.role
+    this.avatar,
+    this.coordinate,
+    required this.role,
+    this.restaurantId
   });
 
   Map<String, dynamic> toJson() {
@@ -26,6 +28,7 @@ class RegisterRequest {
       'phoneNumber': phoneNumber,
       'coordinate': coordinate,
       'avatar': avatar,
+      'restaurantId': restaurantId
     };
   }
 }

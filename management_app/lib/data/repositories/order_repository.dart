@@ -76,7 +76,7 @@ class OrderRepository {
     try {
       Response response = await get(
           Uri.parse(
-              "${GlobalVariable.url}/order/api/v1/Order/Employee-GetByStatus?orderStatus=${request.orderStatus}&sortDirection=${request.sortDirection}"),
+              "${GlobalVariable.url}/order/api/v1/Order/Employee-GetByStatus?status=${request.orderStatus}"),
           headers: headers);
 
       Map<String, dynamic> data = json.decode(response.body);

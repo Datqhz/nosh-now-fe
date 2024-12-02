@@ -21,6 +21,7 @@ class OrderDetailScreen extends StatefulWidget {
 
 class _OrderDetailScreenState extends State<OrderDetailScreen> {
   ValueNotifier<GetOrderByIdData?> order = ValueNotifier(null);
+  ValueNotifier<List<int>> checkedList = ValueNotifier([]);
 
   @override
   void initState() {
@@ -37,6 +38,17 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
     fetchOrderData(context);
   }
 
+  void onChanged(int orderDetailId, bool isChecked) {
+    var temp = checkedList.value;
+    if (isChecked) {
+      temp.add(orderDetailId);
+    } else {
+      temp.remove(orderDetailId);
+    }
+
+    checkedList.value = temp;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -46,7 +58,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
           valueListenable: order,
           builder: (context, orderValue, child) {
             if (orderValue == null) {
-              return Center(
+              return const Center(
                 child: SpinKitCircle(
                   color: Colors.black,
                   size: 50,
@@ -306,7 +318,8 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                           children: List.generate(
                               orderValue.orderDetails.length, (index) {
                             return OrderDetailItem(
-                                orderDetail: orderValue.orderDetails[index]);
+                                orderDetail: orderValue.orderDetails[index],
+                                onChange: onChanged);
                           }),
                         ),
 
@@ -393,6 +406,30 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                                   overflow: TextOverflow.ellipsis),
                             )
                           ],
+                        ),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                          width: double.infinity,
+                          height: 44,
+                          child: TextButton(
+                            onPressed: () async {
+                              // Do something
+                            },
+                            style: TextButton.styleFrom(
+                              backgroundColor: Colors.black,
+                              foregroundColor:
+                                  const Color.fromRGBO(240, 240, 240, 1),
+                              textStyle: const TextStyle(
+                                  fontSize: 16, fontWeight: FontWeight.w600),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                            ),
+                            child: const Text('Update status'),
+                          ),
                         ),
                         const SizedBox(
                           height: 50,

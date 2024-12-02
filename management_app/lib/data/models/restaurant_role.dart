@@ -1,0 +1,4 @@
+enum RestaurantRole {
+  ServiceStaff,
+  Chef
+}

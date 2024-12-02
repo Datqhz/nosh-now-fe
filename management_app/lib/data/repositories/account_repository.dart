@@ -28,6 +28,7 @@ class AccountRepository {
       int statusCode = response.statusCode;
       if (statusCode == 200) {
         GlobalVariable.jwt = responseData.data!.accessToken;
+        GlobalVariable.scope = responseData.data!.scope;
         return true;
       }
 
@@ -61,7 +62,7 @@ class AccountRepository {
       showSnackBar(context, responseData.statusText!);
       return false;
     } catch (e) {
-      showSnackBar(context, "An error has occured");
+      showSnackBar(context, "An error has occurred");
       print(e);
       return false;
     }

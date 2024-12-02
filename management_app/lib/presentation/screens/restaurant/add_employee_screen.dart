@@ -1,32 +1,29 @@
-import 'dart:io';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:management_app/core/utils/map.dart';
+import 'package:management_app/core/constants/global_variable.dart';
 import 'package:management_app/core/utils/validate.dart';
+import 'package:management_app/data/models/restaurant_role.dart';
 import 'package:management_app/data/repositories/account_repository.dart';
 import 'package:management_app/data/requests/register_request.dart';
-import 'package:management_app/presentation/screens/auth/login_screen.dart';
-import 'package:management_app/presentation/screens/auth/pick_location_register_screen.dart';
-import 'package:management_app/presentation/screens/auth/register_success.dart';
-class RegisterScreen extends StatefulWidget {
-  const RegisterScreen({super.key});
 
+class AddEmployeeScreen extends StatefulWidget {
+  const AddEmployeeScreen({super.key});
   @override
-  State<RegisterScreen> createState() => _RegisterScreenState();
+  State<AddEmployeeScreen> createState() => _AddEmployeeScreenState();
 }
 
-class _RegisterScreenState extends State<RegisterScreen> {
+class _AddEmployeeScreenState extends State<AddEmployeeScreen> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _displayNameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
-  final TextEditingController _addressController = TextEditingController();
   final ValueNotifier<XFile?> _avatar = ValueNotifier(null);
-  ValueNotifier<String> coordinator = ValueNotifier('');
   final ValueNotifier<bool> _isObscure = ValueNotifier(true);
+  final List<RestaurantRole> _restaurantRole = RestaurantRole.values;
+  final ValueNotifier<String> _roleSelected =
+      ValueNotifier(RestaurantRole.values[0].name);
 
   @override
   void initState() {
@@ -40,9 +37,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     _emailController.dispose();
     _passwordController.dispose();
     _phoneController.dispose();
-    _addressController.dispose();
     _avatar.dispose();
-    coordinator.dispose();
     _isObscure.dispose();
     super.dispose();
   }
@@ -71,50 +66,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             height: 70,
                           ),
                           //avatar
-                          GestureDetector(
-                            onTap: () async {
-                            },
-                            child: SizedBox(
-                              height: 100,
-                              child: Stack(
-                                children: [
-                                  ValueListenableBuilder(
-                                      valueListenable: _avatar,
-                                      builder: (context, value, child) {
-                                        return CircleAvatar(
-                                          backgroundColor: Colors.black,
-                                          radius: 50,
-                                          backgroundImage: value != null
-                                              ? FileImage(File(value.path))
-                                                  as ImageProvider<Object>
-                                              : const AssetImage(
-                                                  "assets/images/avatar.jpg"),
-                                        );
-                                      }),
-                                  Positioned(
-                                    bottom: 0,
-                                    right: 16,
-                                    child: Container(
-                                      height: 20,
-                                      width: 20,
-                                      decoration: BoxDecoration(
-                                          color: Colors.black,
-                                          borderRadius:
-                                              BorderRadius.circular(2)),
-                                      child: const Icon(
-                                        CupertinoIcons.pencil,
-                                        size: 16,
-                                        color: Color.fromRGBO(240, 240, 240, 1),
-                                      ),
-                                    ),
-                                  )
-                                ],
-                              ),
-                            ),
-                          ),
-                          const SizedBox(
-                            height: 16,
-                          ),
                           Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 10),
                             child: Form(
@@ -375,133 +326,65 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                     },
                                   ),
                                   const SizedBox(
-                                    height: 12,
+                                    height: 8,
                                   ),
                                   const Text(
-                                    'Address',
+                                    'Category',
                                     style: TextStyle(
                                         fontSize: 18,
                                         color: Color.fromRGBO(55, 55, 55, 0.5),
                                         fontWeight: FontWeight.w400),
                                   ),
-                                  // address input
-                                  TextFormField(
-                                    onTap: () async {
-                                      dynamic latlng = await Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  const PickLocationRegisterScreen()));
-                                      String address =
-                                          await getAddressFromLatLng(latlng);
-                                      _addressController.text = address;
-                                      coordinator.value =
-                                          '${latlng.latitude}-${latlng.longitude}';
-                                    },
-                                    controller: _addressController,
-                                    readOnly: true,
-                                    decoration: const InputDecoration(
-                                      suffixIcon:
-                                          Icon(CupertinoIcons.map_pin_ellipse),
-                                      suffixStyle: TextStyle(
-                                          color: Color.fromRGBO(49, 49, 49, 1)),
-                                      enabledBorder: UnderlineInputBorder(
-                                        borderSide: BorderSide(
-                                            color: Color.fromRGBO(
-                                                118, 118, 118, 1),
-                                            width:
-                                                1), // Màu viền khi không được chọn
+                                  DropdownButtonFormField<String>(
+                                      dropdownColor: Colors.white,
+                                      isExpanded: true,
+                                      style: const TextStyle(
+                                          color: Color.fromRGBO(49, 49, 49, 1),
+                                          overflow: TextOverflow.ellipsis),
+                                      icon: const Icon(
+                                        CupertinoIcons.chevron_down,
+                                        size: 14,
+                                        color: Color.fromRGBO(118, 118, 118, 1),
                                       ),
-                                      focusedBorder: UnderlineInputBorder(
-                                        borderSide: BorderSide(
-                                          color: Color.fromRGBO(35, 35, 35, 1),
-                                          width: 1,
+                                      decoration: const InputDecoration(
+                                        border: UnderlineInputBorder(
+                                          borderSide: BorderSide(
+                                              color: Color.fromRGBO(
+                                                  118, 118, 118, 1),
+                                              width:
+                                                  1), // Màu viền khi không được chọn
                                         ),
-                                      ),
-                                      errorBorder: UnderlineInputBorder(
-                                        borderSide: BorderSide(
-                                          color: Color.fromRGBO(182, 0, 0, 1),
-                                          width: 1,
+                                        errorBorder: UnderlineInputBorder(
+                                          borderSide: BorderSide(
+                                            color: Color.fromRGBO(182, 0, 0, 1),
+                                            width: 1,
+                                          ),
                                         ),
-                                      ),
-                                      focusedErrorBorder: UnderlineInputBorder(
-                                        borderSide: BorderSide(
-                                          color: Color.fromRGBO(182, 0, 0, 1),
-                                          width: 1,
+                                        focusedErrorBorder:
+                                            UnderlineInputBorder(
+                                          borderSide: BorderSide(
+                                            color: Color.fromRGBO(182, 0, 0, 1),
+                                            width: 1,
+                                          ),
                                         ),
+                                        errorStyle: TextStyle(
+                                            color:
+                                                Color.fromRGBO(182, 0, 0, 1)),
                                       ),
-                                      errorStyle: TextStyle(
-                                          color: Color.fromRGBO(182, 0, 0, 1)),
-                                      border: InputBorder.none,
-                                    ),
-                                    style: const TextStyle(
-                                        color: Color.fromRGBO(49, 49, 49, 1),
-                                        fontSize: 14,
-                                        decoration: TextDecoration.none),
-                                    validator: (value) {
-                                      if (value!.isEmpty) {
-                                        return "Please choose your default location";
-                                      }
-                                      return null;
-                                    },
-                                  ),
-                                  const SizedBox(
-                                    height: 20,
-                                  ),
-                                  //button sign up
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 30),
-                                    width: double.infinity,
-                                    height: 44,
-                                    child: TextButton(
-                                      onPressed: () async {
-                                        if (_formKey.currentState!.validate()) {
-                                          final displayName =
-                                              _displayNameController.text
-                                                  .trim();
-                                          final email =
-                                              _emailController.text.trim();
-                                          final password =
-                                              _passwordController.text.trim();
-                                          final phone =
-                                              _phoneController.text.trim();
+                                      value: _roleSelected.value,
+                                      items: _restaurantRole
+                                          .map((item) =>
+                                              DropdownMenuItem<String>(
+                                                value: item.name,
+                                                child: Text(
+                                                  item.name,
+                                                ),
+                                              ))
+                                          .toList(),
+                                      onChanged: (value) {
+                                        _roleSelected.value = value!;
+                                      }),
 
-                                          var request = RegisterRequest(
-                                              displayname: displayName,
-                                              userName: email,
-                                              password: password,
-                                              phoneNumber: phone,
-                                              avatar: '',
-                                              coordinate: coordinator.value,
-                                              role: 'Restaurant');
-                                          var isCreated =
-                                              await AccountRepository()
-                                                  .signUp(request, context);
-                                          if (isCreated) {
-                                            Navigator.pushReplacement(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder: (context) =>
-                                                    const RegisterSuccessScreen(),
-                                              ),
-                                            );
-                                          }
-                                        }
-                                      },
-                                      style: TextButton.styleFrom(
-                                          backgroundColor: Colors.black,
-                                          foregroundColor: const Color.fromRGBO(
-                                              240, 240, 240, 1),
-                                          textStyle: const TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.w600),
-                                          shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(8))),
-                                      child: const Text('Sign up'),
-                                    ),
-                                  ),
                                   const SizedBox(
                                     height: 12,
                                   ),
@@ -510,41 +393,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             ),
                           ),
                           const Expanded(child: SizedBox()),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              const Text(
-                                "Already have an account?",
-                                style: TextStyle(
-                                    fontSize: 16.0,
-                                    fontWeight: FontWeight.bold,
-                                    color: Color.fromRGBO(40, 40, 40, 0.6)),
-                              ),
-                              const SizedBox(
-                                width: 4,
-                              ),
-                              // navigate to sign up
-                              GestureDetector(
-                                onTap: () {
-                                  Navigator.pushReplacement(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              const LoginScreen()));
-                                },
-                                child: const Text(
-                                  'Sign in.',
-                                  style: TextStyle(
-                                      fontSize: 16.0,
-                                      fontWeight: FontWeight.bold,
-                                      color: Color.fromRGBO(40, 40, 40, 1)),
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(
-                            height: 20,
-                          )
                         ],
                       ),
                     ),
@@ -575,12 +423,47 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           width: 12,
                         ),
                         const Text(
-                          'Fill your eater profile',
+                          'Add employee',
                           style: TextStyle(
                               fontSize: 18.0,
                               fontWeight: FontWeight.bold,
                               color: Color.fromRGBO(49, 49, 49, 1)),
-                        )
+                        ),
+                        const Expanded(child: SizedBox()),
+                        GestureDetector(
+                          onTap: () async {
+                            if (_formKey.currentState!.validate()) {
+                              final displayName =
+                                  _displayNameController.text.trim();
+                              final email = _emailController.text.trim();
+                              final password = _passwordController.text.trim();
+                              final phone = _phoneController.text.trim();
+
+                              var request = RegisterRequest(
+                                  displayname: displayName,
+                                  userName: email,
+                                  password: password,
+                                  phoneNumber: phone,
+                                  role: _roleSelected.value,
+                                  avatar:
+                                      "https://static.vecteezy.com/system/resources/previews/009/292/244/original/default-avatar-icon-of-social-media-user-vector.jpg",
+                                  restaurantId: GlobalVariable.profile!.id);
+                              var isCreated = await AccountRepository()
+                                  .signUp(request, context);
+                              if (isCreated) {
+                                Navigator.pop(context, true);
+                              }
+                            }
+                          },
+                          child: const Text(
+                            'Save',
+                            style: TextStyle(
+                              fontSize: 16.0,
+                              fontWeight: FontWeight.bold,
+                              color: Color.fromRGBO(49, 49, 49, 1),
+                            ),
+                          ),
+                        ),
                       ],
                     ),
                   ),

@@ -41,7 +41,6 @@ class _ManageOrderScreenState extends State<ManageOrderScreen>
   }
 
   void reload() {
-    print('reload call');
     fetchData();
   }
 

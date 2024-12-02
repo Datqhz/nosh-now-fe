@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:management_app/core/constants/global_variable.dart';
 import 'package:management_app/data/providers/user_state_provider.dart';
 import 'package:management_app/presentation/screens/restaurant/ingredient_management_screen.dart';
+import 'package:management_app/presentation/screens/restaurant/manage_employee_screen.dart';
 import 'package:management_app/presentation/widget/drawer_item.dart';
 import 'package:provider/provider.dart';
 
@@ -224,7 +225,7 @@ class _MyDrawerState extends State<MyDrawer> {
                     context,
                     MaterialPageRoute(
                         builder: (context) =>
-                            const IngredientManagementScreen()));
+                            const ManageEmployeeScreen()));
               })
         ],
       ),
