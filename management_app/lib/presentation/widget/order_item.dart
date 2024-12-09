@@ -49,7 +49,7 @@ class OrderItem extends StatelessWidget {
                 children: [
                   // name
                   Text(
-                    order.restaurantName,
+                    order.customerName,
                     textAlign: TextAlign.center,
                     maxLines: 1,
                     style: const TextStyle(

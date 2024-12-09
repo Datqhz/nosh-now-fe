@@ -19,14 +19,14 @@ class GetOrdersData {
   DateTime orderDate;
   double totalPay;
   int orderStatus;
-  String restaurantName;
+  String customerName;
 
   GetOrdersData({
     required this.orderId, 
     required this.orderDate,
     required this.totalPay,
     required this.orderStatus,
-    required this.restaurantName,
+    required this.customerName,
   });
 
   factory GetOrdersData.fromJson(Map<dynamic, dynamic> json) {
@@ -34,7 +34,7 @@ class GetOrdersData {
       orderId: json['orderId'],
       orderDate: DateTime.parse(json['orderDate']),
       totalPay: json['totalPay'] / 1.0,
-      restaurantName: json['restaurantName'],
+      customerName: json['customerName'],
       orderStatus: json['orderStatus']
     );
   }

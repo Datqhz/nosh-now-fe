@@ -11,7 +11,6 @@ class UserStateProvider with ChangeNotifier {
   }
   void logout(){
     _isLogin = false;
-    print("logout");
     notifyListeners();
   }
 }

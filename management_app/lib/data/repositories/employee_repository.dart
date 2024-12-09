@@ -40,7 +40,7 @@ class EmployeeRepository {
     return null;
   }
 
-  Future<bool> getProfile(String employeeId, BuildContext context) async {
+  Future<bool> getEmployeeProfile(String employeeId, BuildContext context) async {
     Map<String, String> headers = {
       'Content-Type': 'application/json; charset=UTF-8',
       "Authorization": "Bearer ${GlobalVariable.jwt}"
@@ -69,6 +69,36 @@ class EmployeeRepository {
     return false;
   }
 
+  Future<bool> getProfile(BuildContext context) async {
+    Map<String, String> headers = {
+      'Content-Type': 'application/json; charset=UTF-8',
+      "Authorization": "Bearer ${GlobalVariable.jwt}"
+    };
+    try {
+      Response response = await get(
+          Uri.parse(
+              "${GlobalVariable.url}/core/api/v1/Employee/Profile"),
+          headers: headers);
+
+      int statusCode = response.statusCode;
+
+      Map<String, dynamic> data = json.decode(response.body);
+      var responseData = ProfileResponse.fromJson(data);
+      if (statusCode == 200) {
+        GlobalVariable.profile = responseData.data;
+        return true;
+      }
+
+      showSnackBar(context, responseData.statusText!);
+    } catch (e) {
+      print(e.toString());
+      showSnackBar(context, 'Some error has occured');
+    }
+
+    return false;
+  }
+
+
   Future<bool> updateProfile(
       UpdateEmployeeRequest request, BuildContext context) async {
     Map<String, String> headers = {
@@ -86,6 +116,7 @@ class EmployeeRepository {
       Map<String, dynamic> data = json.decode(response.body);
       var responseData = UpdateProfileResponse.fromJson(data);
       if (statusCode == 200) {
+        showSnackBar(context, "Update successful!");
         return true;
       }
 

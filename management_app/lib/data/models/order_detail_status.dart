@@ -1,0 +1,4 @@
+enum OrderDetailStatus {
+  Preparing,
+  Done
+}

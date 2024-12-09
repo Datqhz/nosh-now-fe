@@ -30,7 +30,7 @@ class _MainScreenState extends State<MainScreen> {
 
   Widget _replaceScreenByBottomBarIndex(int idx) {
     if (idx == 0) {
-      return RestaurantDashboardScreen();
+      return const RestaurantDashboardScreen();
     } else if (idx == 1) {
       return const SizedBox(); // list notification
     } else if (idx == 2) {

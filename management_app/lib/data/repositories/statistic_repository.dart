@@ -1,225 +1,66 @@
 import 'dart:convert';
 
+import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart';
-import 'package:intl/intl.dart';
 import 'package:management_app/core/constants/global_variable.dart';
+import 'package:management_app/core/utils/snack_bar.dart';
+import 'package:management_app/data/requests/get_restaurant_statistic_request.dart';
+import 'package:management_app/data/responses/get_restaurant_overview_response.dart';
+import 'package:management_app/data/responses/get_restaurant_statistic_response.dart';
 
 class StatisticRepository {
-  Future<double> getRevenueOfMerchantByTime(
-      int merchantId, int option, DateTime time) async {
-    // option = {1,2,3} - 1 is by date, 2 is by month, 3 is by year
+  Future<RestaurantStatisticData?> getRestaurantStatistic(
+      GetRestaurantStatisticRequest request, BuildContext context) async {
     Map<String, String> headers = {
       'Content-Type': 'application/json; charset=UTF-8',
       "Authorization": "Bearer ${GlobalVariable.jwt}"
     };
     String url =
-        "${GlobalVariable.url}/api/statistic/calc-revenue/merchant?merchantId=$merchantId&";
-    if (option == 1) {
-      url += 'date=${DateFormat('yyyy-MM-dd').format(time)}';
-    } else {
-      url += 'year=${time.year}';
-      if (option == 2) {
-        url += '&month=${time.month}';
-      }
-    }
-    print(url);
+        "${GlobalVariable.url}/order/api/v1/Statistic/GetStatistics?fromDate=${request.fromDate}&toDate=${request.toDate}";
     try {
       Response response = await get(Uri.parse(url), headers: headers);
-      int statusCode = response.statusCode;
-      if (statusCode != 200) {
-        throw Exception("Something wrong when request to get data");
-      }
+
       Map<String, dynamic> data = json.decode(response.body);
-      print(response.body);
-      return data['total'] / 1.0;
+      var responseData = GetRestaurantStatisticResponse.fromJson(data);
+      int statusCode = response.statusCode;
+
+      if (statusCode == 200) {
+        return responseData.data;
+      }
+
+      showSnackBar(context, responseData.statusText!);
     } catch (e) {
+      showSnackBar(context, "An error has occurred");
       print(e.toString());
-      throw Exception('Fail to get data');
     }
+
+    return null;
   }
 
-  Future<double> getEanrningOfShipperByTime(
-      int shipperId, int option, DateTime time) async {
-    // option = {1,2,3} - 1 is by date, 2 is by month, 3 is by year
+  Future<GetRestaurantOverviewData?> getRestaurantOverview(
+      DateTime date, BuildContext context) async {
     Map<String, String> headers = {
       'Content-Type': 'application/json; charset=UTF-8',
       "Authorization": "Bearer ${GlobalVariable.jwt}"
     };
     String url =
-        "${GlobalVariable.url}/api/statistic/calc-earning/shipper?shipperId=$shipperId&";
-    if (option == 1) {
-      url += 'date=${DateFormat('yyyy-MM-dd').format(time)}';
-    } else {
-      url += 'year=${time.year}';
-      if (option == 2) {
-        url += '&month=${time.month}';
-      }
-    }
-    print(url);
+        "${GlobalVariable.url}/order/api/v1/Statistic/Overview?date=$date";
     try {
       Response response = await get(Uri.parse(url), headers: headers);
-      int statusCode = response.statusCode;
-      if (statusCode != 200) {
-        throw Exception("Something wrong when request to get data");
-      }
-      Map<String, dynamic> data = json.decode(response.body);
-      print(response.body);
-      return data['total'] / 1.0;
-    } catch (e) {
-      print(e.toString());
-      throw Exception('Fail to get data');
-    }
-  }
 
-  Future<int> getTotalOrderOfUserByTimeAndRole(
-      int userId, int roleId, int option, DateTime time) async {
-    // option = {1,2,3} - 1 is by date, 2 is by month, 3 is by year
-    Map<String, String> headers = {
-      'Content-Type': 'application/json; charset=UTF-8',
-      "Authorization": "Bearer ${GlobalVariable.jwt}"
-    };
-    String url =
-        "${GlobalVariable.url}/api/statistic/count-order/user?userId=$userId&roleId=$roleId&";
-    if (option == 1) {
-      url += 'date=${DateFormat('yyyy-MM-dd').format(time)}';
-    } else {
-      url += 'year=${time.year}';
-      if (option == 2) {
-        url += '&month=${time.month}';
-      }
-    }
-    try {
-      Response response = await get(Uri.parse(url), headers: headers);
-      int statusCode = response.statusCode;
-      if (statusCode != 200) {
-        throw Exception("Something wrong when request to get data");
-      }
       Map<String, dynamic> data = json.decode(response.body);
-      return data['count'];
-    } catch (e) {
-      print(e.toString());
-      throw Exception('Fail to get data');
-    }
-  }
-
-  Future<int> getTotalOrderByTime(int option, DateTime time) async {
-    // option = {1,2,3} - 1 is by date, 2 is by month, 3 is by year
-    Map<String, String> headers = {
-      'Content-Type': 'application/json; charset=UTF-8',
-      "Authorization": "Bearer ${GlobalVariable.jwt}"
-    };
-    String url = "${GlobalVariable.url}/api/statistic/count-order?";
-    if (option == 1) {
-      url += 'date=${DateFormat('yyyy-MM-dd').format(time)}';
-    } else {
-      url += 'year=${time.year}';
-      if (option == 2) {
-        url += '&month=${time.month}';
-      }
-    }
-    try {
-      Response response = await get(Uri.parse(url), headers: headers);
+      var responseData = GetRestaurantOrverviewResponse.fromJson(data);
       int statusCode = response.statusCode;
-      if (statusCode != 200) {
-        throw Exception("Something wrong when request to get data");
-      }
-      Map<String, dynamic> data = json.decode(response.body);
-      return data['count'];
-    } catch (e) {
-      print(e.toString());
-      throw Exception('Fail to get data');
-    }
-  }
 
-  Future<double> getTotalTransaction(int option, DateTime time) async {
-    // option = {1,2,3} - 1 is by date, 2 is by month, 3 is by year
-    Map<String, String> headers = {
-      'Content-Type': 'application/json; charset=UTF-8',
-      "Authorization": "Bearer ${GlobalVariable.jwt}"
-    };
-    String url = "${GlobalVariable.url}/api/statistic/calc-transaction?";
-    if (option == 1) {
-      url += 'date=${DateFormat('yyyy-MM-dd').format(time)}';
-    } else {
-      url += 'year=${time.year}';
-      if (option == 2) {
-        url += '&month=${time.month}';
+      if (statusCode == 200) {
+        return responseData.data;
       }
-    }
-    try {
-      Response response = await get(Uri.parse(url), headers: headers);
-      int statusCode = response.statusCode;
-      // print(response.body);
-      if (statusCode != 200) {
-        throw Exception("Something wrong when request to get data");
-      }
-      Map<String, dynamic> data = json.decode(response.body);
-      return data['total'] / 1.0;
-    } catch (e) {
-      print(e.toString());
-      throw Exception('Fail to get data');
-    }
-  }
 
-  Future<int> getNumOfNewUser(int roleId, int option, DateTime time) async {
-    // option = {1,2,3} - 1 is by date, 2 is by month, 3 is by year
-    Map<String, String> headers = {
-      'Content-Type': 'application/json; charset=UTF-8',
-      "Authorization": "Bearer ${GlobalVariable.jwt}"
-    };
-    String url =
-        "${GlobalVariable.url}/api/statistic/count-account?roleId=$roleId&";
-    if (option == 1) {
-      url += 'date=${DateFormat('yyyy-MM-dd').format(time)}';
-    } else {
-      url += 'year=${time.year}';
-      if (option == 2) {
-        url += '&month=${time.month}';
-      }
-    }
-    try {
-      Response response = await get(Uri.parse(url), headers: headers);
-      int statusCode = response.statusCode;
-      print(response.body);
-      if (statusCode != 200) {
-        throw Exception("Something wrong when request to get data");
-      }
-      Map<String, dynamic> data = json.decode(response.body);
-      return data['count'];
+      showSnackBar(context, responseData.statusText!);
     } catch (e) {
+      showSnackBar(context, "An error has occurred");
       print(e.toString());
-      throw Exception('Fail to get data');
     }
+    return null;
   }
-
-  // Future<List<TopFood>> getTop5FoodBestSelling(
-  //     int merchantId, int option, DateTime time) async {
-  //   // option = {1,2,3} - 1 is by date, 2 is by month, 3 is by year
-  //   Map<String, String> headers = {
-  //     'Content-Type': 'application/json; charset=UTF-8',
-  //     "Authorization": "Bearer ${GlobalVariable.jwt}"
-  //   };
-  //   String url =
-  //       "${GlobalVariable.url}/api/statistic/top-food?merchantId=$merchantId&";
-  //   if (option == 1) {
-  //     url += 'date=${DateFormat('yyyy-MM-dd').format(time)}';
-  //   } else {
-  //     url += 'year=${time.year}';
-  //     if (option == 2) {
-  //       url += '&month=${time.month}';
-  //     }
-  //   }
-  //   try {
-  //     Response response = await get(Uri.parse(url), headers: headers);
-  //     int statusCode = response.statusCode;
-  //     if (statusCode != 200) {
-  //       throw Exception("Something wrong when request to get data");
-  //     }
-  //     List<dynamic> data = json.decode(response.body);
-  //     return data.map((e) => TopFood.fromJson(e)).toList();
-  //   } catch (e) {
-  //     print(e.toString());
-  //     throw Exception('Fail to get data');
-  //   }
-  // }
 }

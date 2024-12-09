@@ -296,9 +296,9 @@ class _UpdateEmployeeScreenState extends State<UpdateEmployeeScreen> {
                                   displayname: displayName,
                                   phoneNumber: phone,
                                   avatar: widget.employee.avatar);
-                              var isCreated = await EmployeeRepository()
+                              var isUpdated = await EmployeeRepository()
                                   .updateProfile(request, context);
-                              if (isCreated) {
+                              if (isUpdated) {
                                 Navigator.pop(context, true);
                               }
                             }

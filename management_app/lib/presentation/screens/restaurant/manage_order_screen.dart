@@ -292,6 +292,9 @@ class _ManageOrderScreenState extends State<ManageOrderScreen>
                     ),
                   ],
                 ),
+                const SizedBox(
+                  height: 16,
+                ),
                 Container(
                   width: MediaQuery.of(context).size.width - 40,
                   decoration: const BoxDecoration(

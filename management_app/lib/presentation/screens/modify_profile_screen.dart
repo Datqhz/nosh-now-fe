@@ -4,11 +4,15 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:management_app/core/constants/global_variable.dart';
+import 'package:management_app/core/services/image_storage_service.dart';
 import 'package:management_app/core/streams/change_stream.dart';
+import 'package:management_app/core/utils/distance.dart';
 import 'package:management_app/core/utils/image.dart';
+import 'package:management_app/core/utils/map.dart';
 import 'package:management_app/core/utils/validate.dart';
 import 'package:management_app/data/repositories/restaurant_repository.dart';
-import 'package:management_app/data/requests/update_profile_request.dart';
+import 'package:management_app/data/requests/update_restaurant_profile_request.dart';
+import 'package:management_app/presentation/screens/auth/pick_location_register_screen.dart';
 
 class ModifyProfileScreen extends StatefulWidget {
   ModifyProfileScreen({super.key, required this.stream});
@@ -23,12 +27,17 @@ class _ModifyProfileScreenState extends State<ModifyProfileScreen> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _displayNameController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
+  final TextEditingController _addressController = TextEditingController();
   ValueNotifier<XFile?> avatar = ValueNotifier(null);
-  ValueNotifier<String> coordinator = ValueNotifier('');
+  ValueNotifier<String> coordinator =
+      ValueNotifier(GlobalVariable.profile!.coordinate!);
 
   Future<void> setInitValue() async {
     _displayNameController.text = GlobalVariable.profile!.displayName;
     _phoneController.text = GlobalVariable.profile!.phone;
+    var latlng = splitCoordinatorString(coordinator.value);
+    var address = await getAddressFromLatLng(latlng);
+    _addressController.text = address;
   }
 
   @override
@@ -75,13 +84,13 @@ class _ModifyProfileScreenState extends State<ModifyProfileScreen> {
                                         valueListenable: avatar,
                                         builder: (context, value, child) {
                                           return CircleAvatar(
-                                            backgroundColor: Colors.black,
-                                            radius: 50,
-                                            foregroundImage: value != null
-                                                ? FileImage(File(value.path))
-                                                    as ImageProvider<Object>
-                                                : NetworkImage(GlobalVariable.profile!.avatar)
-                                          );
+                                              backgroundColor: Colors.black,
+                                              radius: 50,
+                                              foregroundImage: value != null
+                                                  ? FileImage(File(value.path))
+                                                      as ImageProvider<Object>
+                                                  : NetworkImage(GlobalVariable
+                                                      .profile!.avatar));
                                         }),
                                     Positioned(
                                       bottom: 0,
@@ -236,6 +245,79 @@ class _ModifyProfileScreenState extends State<ModifyProfileScreen> {
                                     const SizedBox(
                                       height: 12,
                                     ),
+                                    const Text(
+                                      'Address',
+                                      style: TextStyle(
+                                          fontSize: 18,
+                                          color:
+                                              Color.fromRGBO(55, 55, 55, 0.5),
+                                          fontWeight: FontWeight.w400),
+                                    ),
+                                    // address input
+                                    TextFormField(
+                                      onTap: () async {
+                                        dynamic latlng = await Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    const PickLocationRegisterScreen()));
+                                        String address =
+                                            await getAddressFromLatLng(latlng);
+                                        _addressController.text = address;
+                                        coordinator.value =
+                                            '${latlng.latitude}-${latlng.longitude}';
+                                      },
+                                      controller: _addressController,
+                                      readOnly: true,
+                                      decoration: const InputDecoration(
+                                        suffixIcon: Icon(
+                                            CupertinoIcons.map_pin_ellipse),
+                                        suffixStyle: TextStyle(
+                                            color:
+                                                Color.fromRGBO(49, 49, 49, 1)),
+                                        enabledBorder: UnderlineInputBorder(
+                                          borderSide: BorderSide(
+                                              color: Color.fromRGBO(
+                                                  118, 118, 118, 1),
+                                              width:
+                                                  1), // Màu viền khi không được chọn
+                                        ),
+                                        focusedBorder: UnderlineInputBorder(
+                                          borderSide: BorderSide(
+                                            color:
+                                                Color.fromRGBO(35, 35, 35, 1),
+                                            width: 1,
+                                          ),
+                                        ),
+                                        errorBorder: UnderlineInputBorder(
+                                          borderSide: BorderSide(
+                                            color: Color.fromRGBO(182, 0, 0, 1),
+                                            width: 1,
+                                          ),
+                                        ),
+                                        focusedErrorBorder:
+                                            UnderlineInputBorder(
+                                          borderSide: BorderSide(
+                                            color: Color.fromRGBO(182, 0, 0, 1),
+                                            width: 1,
+                                          ),
+                                        ),
+                                        errorStyle: TextStyle(
+                                            color:
+                                                Color.fromRGBO(182, 0, 0, 1)),
+                                        border: InputBorder.none,
+                                      ),
+                                      style: const TextStyle(
+                                          color: Color.fromRGBO(49, 49, 49, 1),
+                                          fontSize: 14,
+                                          decoration: TextDecoration.none),
+                                      validator: (value) {
+                                        if (value!.isEmpty) {
+                                          return "Please choose your default location";
+                                        }
+                                        return null;
+                                      },
+                                    ),
                                   ],
                                 ),
                               ),
@@ -289,21 +371,25 @@ class _ModifyProfileScreenState extends State<ModifyProfileScreen> {
                               // Preprocess data
                               final name = _displayNameController.text.trim();
                               final phone = _phoneController.text.trim();
-                              final request = UpdateProfileRequest(
-                                displayname: name,
-                                phoneNumber: phone, 
-                                avatar: GlobalVariable.profile!.avatar
-                              );
+                              String? newImg = '';
+                              newImg = GlobalVariable.profile!.avatar;
+                              if (avatar.value != null) {
+                                newImg =
+                                    await ImageStorageService.uploadAvatarImage(
+                                        avatar.value);
+                              }
+                              final request = UpdateRestaurantProfileRequest(
+                                  displayname: name,
+                                  phoneNumber: phone,
+                                  avatar: newImg!,
+                                  coordinate: coordinator.value);
 
-                              /* TODO: Handle upload image to cloudinary */
-                              // if (avatar.value != null) {
-                              //   base64 = await convertToBase64(avatar.value!);
-                              // }
-
-                              final result = await RestaurantRepository().updateProfile(request, context);
-                              if(result){
+                              final result = await RestaurantRepository()
+                                  .updateProfile(request, context);
+                              if (result) {
                                 GlobalVariable.profile!.displayName = name;
                                 GlobalVariable.profile!.phone = name;
+                                GlobalVariable.profile!.avatar = newImg;
                                 widget.stream.notifyChange();
                                 Navigator.pop(context);
                               }

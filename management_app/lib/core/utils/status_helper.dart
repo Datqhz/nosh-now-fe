@@ -38,4 +38,15 @@ class StatusHelper {
         return {'text': 'Unknown Status', 'color': Colors.black}; // Mặc định
     }
   }
+
+  static Map<String, dynamic> getButtonTItle(int status) {
+    switch (status) {
+      case 2: // Preparing
+        return {'text': 'Prepare done', 'color': Color(0xFFFFD700)}; // Vàng
+      case 3: // ReadyToPickup
+        return {'text': 'Shipper pick up', 'color': Color(0xFFFFA500)}; // Cam
+      default:
+        return {'text': 'Unknown Status', 'color': Colors.black}; // Mặc định
+    }
+  }
 }

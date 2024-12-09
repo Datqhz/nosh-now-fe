@@ -2,10 +2,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:intl/intl.dart';
+import 'package:management_app/core/constants/global_variable.dart';
 import 'package:management_app/core/utils/distance.dart';
 import 'package:management_app/core/utils/map.dart';
 import 'package:management_app/core/utils/status_helper.dart';
+import 'package:management_app/data/repositories/order_detail_repository.dart';
 import 'package:management_app/data/repositories/order_repository.dart';
+import 'package:management_app/data/requests/update_status_orderdetail_request.dart';
 import 'package:management_app/data/responses/get_order_by_id_response.dart';
 import 'package:management_app/presentation/widget/order_detail_item.dart';
 
@@ -410,27 +413,127 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                         const SizedBox(
                           height: 20,
                         ),
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 20),
-                          width: double.infinity,
-                          height: 44,
-                          child: TextButton(
-                            onPressed: () async {
-                              // Do something
-                            },
-                            style: TextButton.styleFrom(
-                              backgroundColor: Colors.black,
-                              foregroundColor:
-                                  const Color.fromRGBO(240, 240, 240, 1),
-                              textStyle: const TextStyle(
-                                  fontSize: 16, fontWeight: FontWeight.w600),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8),
+                        if (GlobalVariable.scope == 'ServiceStaff' &&
+                            orderValue.orderStatus == 3)
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 20),
+                            width: double.infinity,
+                            height: 44,
+                            child: TextButton(
+                              onPressed: () async {
+                                // TODO
+                              },
+                              style: TextButton.styleFrom(
+                                backgroundColor: Colors.black,
+                                foregroundColor:
+                                    const Color.fromRGBO(240, 240, 240, 1),
+                                textStyle: const TextStyle(
+                                    fontSize: 16, fontWeight: FontWeight.w600),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
                               ),
+                              child: Text(StatusHelper.getButtonTItle(
+                                  orderValue.orderStatus)['text']),
                             ),
-                            child: const Text('Update status'),
                           ),
-                        ),
+                        if (GlobalVariable.scope == 'ServiceStaff' &&
+                            orderValue.orderStatus == 1) ...[
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 20),
+                            width: double.infinity,
+                            height: 44,
+                            child: TextButton(
+                              onPressed: () async {
+                                var result = await OrderRepository()
+                                    .acceptOrder(orderValue.orderId, context);
+                                if (result) {
+                                  reload();
+                                }
+                              },
+                              style: TextButton.styleFrom(
+                                backgroundColor: Colors.black,
+                                foregroundColor:
+                                    const Color.fromRGBO(240, 240, 240, 1),
+                                textStyle: const TextStyle(
+                                    fontSize: 16, fontWeight: FontWeight.w600),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                              ),
+                              child: const Text('Accept'),
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 12,
+                          ),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 20),
+                            width: double.infinity,
+                            height: 44,
+                            child: TextButton(
+                              onPressed: () async {
+                                var result = await OrderRepository()
+                                    .rejectOrder(orderValue.orderId, context);
+                                if (result) {
+                                  reload();
+                                }
+                              },
+                              style: TextButton.styleFrom(
+                                backgroundColor: Colors.white,
+                                foregroundColor: Colors.red,
+                                textStyle: const TextStyle(
+                                    fontSize: 16, fontWeight: FontWeight.w600),
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                    side: const BorderSide(
+                                        color: Colors.red, width: 1)),
+                              ),
+                              child: const Text('Reject'),
+                            ),
+                          ),
+                          const SizedBox(
+                            width: 12,
+                          ),
+                        ],
+
+                        if (GlobalVariable.scope == 'Chef' &&
+                            orderValue.orderStatus == 2)
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 20),
+                            width: double.infinity,
+                            height: 44,
+                            child: TextButton(
+                              onPressed: () async {
+                                var updateInput =
+                                    <UpdateStatusOrderdetailInput>[];
+                                for (var e in checkedList.value) {
+                                  var input = UpdateStatusOrderdetailInput(
+                                      orderDetailId: e, status: 1);
+                                  updateInput.add(input);
+                                }
+                                var request = UpdateStatusOrderdetailRequest(
+                                    orderId: orderValue.orderId,
+                                    input: updateInput);
+                                var result = await OrderDetailRepository()
+                                    .updateOrderDetail(request, context);
+                                if (result) {
+                                  reload();
+                                }
+                              },
+                              style: TextButton.styleFrom(
+                                backgroundColor: Colors.black,
+                                foregroundColor:
+                                    const Color.fromRGBO(240, 240, 240, 1),
+                                textStyle: const TextStyle(
+                                    fontSize: 16, fontWeight: FontWeight.w600),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                              ),
+                              child: const Text("Update"),
+                            ),
+                          ),
                         const SizedBox(
                           height: 50,
                         )

@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:management_app/core/constants/global_variable.dart';
 import 'package:management_app/data/providers/user_state_provider.dart';
 import 'package:management_app/presentation/screens/restaurant/ingredient_management_screen.dart';
+import 'package:management_app/presentation/screens/restaurant/manage_calendar_screen.dart';
 import 'package:management_app/presentation/screens/restaurant/manage_employee_screen.dart';
+import 'package:management_app/presentation/screens/restaurant/restaurant_statistic_screen.dart';
 import 'package:management_app/presentation/widget/drawer_item.dart';
 import 'package:provider/provider.dart';
 
@@ -200,11 +202,13 @@ class _MyDrawerState extends State<MyDrawer> {
           DrawerItem(
               icon: CupertinoIcons.calendar,
               title: 'Calendar',
-              onTap: () => Container(
-                    width: 100,
-                    height: 100,
-                    color: Colors.blue,
-                  )),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const ManageCalendarScreen()));
+              }),
           DrawerItem(
               icon: CupertinoIcons.calendar,
               title: 'Ingredient',
@@ -224,8 +228,18 @@ class _MyDrawerState extends State<MyDrawer> {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
+                        builder: (context) => const ManageEmployeeScreen()));
+              }),
+          DrawerItem(
+              icon: CupertinoIcons.chart_bar,
+              title: 'Statistic',
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
                         builder: (context) =>
-                            const ManageEmployeeScreen()));
+                            const RestaurantStatisticScreen()));
               })
         ],
       ),

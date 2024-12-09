@@ -160,6 +160,7 @@ class EmployeeItem extends StatelessWidget {
                     bool rs = await EmployeeRepository()
                         .deleteEmployee(employee.id, context);
                     if (rs) {
+                      onChanged();
                       Navigator.pop(context, true);
                     }
                   },

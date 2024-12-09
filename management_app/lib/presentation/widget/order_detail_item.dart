@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:management_app/core/constants/global_variable.dart';
 import 'package:management_app/data/models/order_detail_data.dart';
+import 'package:management_app/data/models/order_detail_status.dart';
 
 class OrderDetailItem extends StatelessWidget {
-  OrderDetailItem({super.key, required this.orderDetail, required this.onChange});
+  OrderDetailItem(
+      {super.key, required this.orderDetail, required this.onChange});
 
   OrderDetailData orderDetail;
   ValueNotifier<bool> isChecked = ValueNotifier(false);
@@ -89,33 +92,39 @@ class OrderDetailItem extends StatelessWidget {
           const SizedBox(
             width: 8,
           ),
-          if (true)
-            ValueListenableBuilder(
-                valueListenable: isChecked,
-                builder: (context, value, child) {
-                  return Checkbox(
-                    checkColor: Colors.black,
-                    fillColor: WidgetStateProperty.resolveWith(getColor),
-                    value: value,
-                    onChanged: (bool? value) {
-                      onChange(orderDetail.orderDetailId, !value!);
-                      isChecked.value = !value;
-                    },
-                  );
-                }),
-          if (!false)
-            const Text(
-              'Done',
-              textAlign: TextAlign.center,
-              maxLines: 1,
-              style: TextStyle(
-                fontSize: 16.0,
-                fontWeight: FontWeight.w600,
-                height: 1.2,
-                color: Colors.green,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
+          Column(
+            children: [
+              if (orderDetail.status == OrderDetailStatus.Preparing &&
+                  GlobalVariable.scope == 'Chef')
+                ValueListenableBuilder(
+                    valueListenable: isChecked,
+                    builder: (context, checkedValue, child) {
+                      return Checkbox(
+                        checkColor: Colors.black,
+                        fillColor: WidgetStateProperty.resolveWith(getColor),
+                        side: const BorderSide(color: Colors.black, width: 0.5),
+                        value: checkedValue,
+                        onChanged: (bool? value) {
+                          onChange(orderDetail.orderDetailId, value!);
+                          isChecked.value = value;
+                        },
+                      );
+                    }),
+              if (orderDetail.status == OrderDetailStatus.Done)
+                const Text(
+                  'Done',
+                  textAlign: TextAlign.center,
+                  maxLines: 1,
+                  style: TextStyle(
+                    fontSize: 16.0,
+                    fontWeight: FontWeight.w600,
+                    height: 1.2,
+                    color: Colors.green,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+            ],
+          ),
           const SizedBox(
             width: 12,
           ),

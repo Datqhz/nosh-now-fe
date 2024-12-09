@@ -83,7 +83,6 @@ class ProfileScreen extends StatelessWidget {
           GlobalVariable.profile = null;
           GlobalVariable.jwt = '';
           Provider.of<UserStateProvider>(context, listen: false).logout();
-          Navigator.pop(context);
         },
         true,
       )

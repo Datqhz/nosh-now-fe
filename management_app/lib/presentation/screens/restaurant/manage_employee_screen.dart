@@ -289,10 +289,10 @@ class _ManageEmployeeScreenState extends State<ManageEmployeeScreen>
                       children: [
                         GestureDetector(
                           onTap: () {
-                            Scaffold.of(context).openDrawer();
+                            Navigator.pop(context);
                           },
                           child: const Icon(
-                            CupertinoIcons.bars,
+                            CupertinoIcons.arrow_left,
                             size: 20,
                             color: Color.fromRGBO(49, 49, 49, 1),
                           ),
@@ -315,6 +315,9 @@ class _ManageEmployeeScreenState extends State<ManageEmployeeScreen>
                           ),
                         ),
                       ],
+                    ),
+                    const SizedBox(
+                      height: 10,
                     ),
                     Container(
                       width: MediaQuery.of(context).size.width - 40,
