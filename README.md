@@ -40,7 +40,7 @@ This project have 2 application
     - **Set host for `GlobalVariable`**:  
     1. Open file GlobalVariable:  
     Find file with path `lib/core/constants/global_variable.dart`, and open it.  
-    2. Set host: 
+    2. Set host:  
     Set your host your take from above
     ```dart
     class GlobalVariable {
@@ -54,7 +54,7 @@ This project have 2 application
 4. **Build .apk file**  
     Run this command
     ```
-    flutter build apk --realease
+    flutter build apk --release
     ```
     .apk file will be added with path: `build/app/outputs/flutter-apk/app-release.apk`
 
