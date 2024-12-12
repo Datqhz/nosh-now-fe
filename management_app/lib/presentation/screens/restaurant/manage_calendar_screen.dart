@@ -319,11 +319,8 @@ class _ManageCalendarScreenState extends State<ManageCalendarScreen> {
                                                 onPressed: () async {
                                                   if (_formKey.currentState!
                                                       .validate()) {
-                                                    if (!_startTime.value!
-                                                        .isBefore(
-                                                            _endTime.value!)) {
-                                                      showSnackBar(context,
-                                                          'start time must be less than end time');
+                                                    if (_startTime.value!.getTotalMinutes >= _endTime.value!.getTotalMinutes) {
+                                                      showSnackBar(context, 'start time must be less than end time');
                                                       return;
                                                     }
                                                     var startTime = DateTime(
