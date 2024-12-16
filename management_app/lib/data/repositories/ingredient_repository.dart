@@ -12,8 +12,6 @@ import 'package:management_app/data/responses/update_food_response.dart';
 import 'package:management_app/data/responses/update_ingredient_response.dart';
 
 class IngredientRepository {
-
-
   Future<List<GetIngredientsData>> getIngredients(BuildContext context) async {
     Map<String, String> headers = {
       'Content-Type': 'application/json; charset=UTF-8',
@@ -21,7 +19,8 @@ class IngredientRepository {
     };
     try {
       Response response = await get(
-          Uri.parse("${GlobalVariable.url}/order/api/v1/Ingredient/Ingredients"),
+          Uri.parse(
+              "${GlobalVariable.url}/order/api/v1/Ingredient/Ingredients"),
           headers: headers);
 
       Map<String, dynamic> data = json.decode(response.body);
@@ -34,24 +33,25 @@ class IngredientRepository {
       showSnackBar(context, responseData.statusText!);
       return [];
     } catch (e) {
-
       showSnackBar(context, "An error has occurred");
       print(e.toString());
       return [];
     }
   }
 
-  Future<int?> createIngredient(CreateIngredientRequest request, BuildContext context) async {
+  Future<int?> createIngredient(
+      CreateIngredientRequest request, BuildContext context) async {
     Map<String, String> headers = {
       'Content-Type': 'application/json; charset=UTF-8',
       "Authorization": "Bearer ${GlobalVariable.jwt}"
     };
     try {
-      Response response =
-          await post(Uri.parse("${GlobalVariable.url}/order/api/v1/Ingredient"),
-              headers: headers,
-              body: jsonEncode(request.toJson()));
-       Map<String, dynamic> data = json.decode(response.body);
+      var requestMap = request.toJson();
+      Response response = await post(
+          Uri.parse("${GlobalVariable.url}/order/api/v1/Ingredient"),
+          headers: headers,
+          body: jsonEncode(requestMap));
+      Map<String, dynamic> data = json.decode(response.body);
       var responseData = CreateIngredientResponse.fromJson(data);
       int statusCode = response.statusCode;
 
@@ -59,27 +59,27 @@ class IngredientRepository {
         showSnackBar(context, "Create successful!");
         return responseData.data!;
       }
-
+      print(responseData.errorMessageCode);
       showSnackBar(context, responseData.statusText!);
     } catch (e) {
       showSnackBar(context, "An error has occurred");
       print(e.toString());
-
     }
 
     return null;
   }
 
-  Future<bool> updateIngredient(UpdateIngredientRequest request, BuildContext context) async {
+  Future<bool> updateIngredient(
+      UpdateIngredientRequest request, BuildContext context) async {
     Map<String, String> headers = {
       'Content-Type': 'application/json; charset=UTF-8',
       "Authorization": "Bearer ${GlobalVariable.jwt}"
     };
     try {
-      Response response = await put(Uri.parse("${GlobalVariable.url}/order/api/v1/Ingredient"),
+      Response response = await put(
+          Uri.parse("${GlobalVariable.url}/order/api/v1/Ingredient"),
           headers: headers,
           body: jsonEncode(request.toJson()));
-
 
       Map<String, dynamic> data = json.decode(response.body);
       var responseData = UpdateFoodResponse.fromJson(data);
@@ -92,7 +92,6 @@ class IngredientRepository {
 
       showSnackBar(context, responseData.statusText!);
     } catch (e) {
-
       showSnackBar(context, "An error has occured");
       print(e.toString());
     }
@@ -122,7 +121,6 @@ class IngredientRepository {
 
       showSnackBar(context, responseData.statusText!);
     } catch (e) {
-
       showSnackBar(context, "An error has occurred");
       print(e.toString());
     }

@@ -59,6 +59,7 @@ class GetFoodByIdData{
 
 class FoodIngredientData{
   int requiredIngredientId;
+  int ingredientId;
   String ingredientName;
   String ingredientImage;
   double requiredAmount;
@@ -69,7 +70,8 @@ class FoodIngredientData{
     required this.ingredientName,
     required this.ingredientImage,
     required this.requiredAmount,
-    required this.unit
+    required this.unit,
+    required this.ingredientId
   });
 
   factory FoodIngredientData.fromJson(Map<dynamic, dynamic> json) {
@@ -78,7 +80,8 @@ class FoodIngredientData{
       ingredientName: json['ingredientName'],
       ingredientImage: json['ingredientImage'],
       requiredAmount: json['requiredAmount'] / 1.0,
-      unit: json['unit']
+      unit: json['unit'],
+      ingredientId: json['ingredientId']
     );
   }
 }

@@ -522,9 +522,6 @@ class _IngredientManagementScreenState
                                                         _quantityController
                                                             .text = '';
                                                         image.value = null;
-                                                      } else {
-                                                        showSnackBar(context,
-                                                            "Can't save your data");
                                                       }
                                                     }
                                                   },

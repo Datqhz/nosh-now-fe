@@ -2,6 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:management_app/core/constants/global_variable.dart';
 import 'package:management_app/core/streams/change_stream.dart';
+import 'package:management_app/core/utils/snack_bar.dart';
+import 'package:management_app/data/providers/hub/hub_provider.dart';
 import 'package:management_app/data/providers/user_state_provider.dart';
 import 'package:management_app/presentation/screens/change_password_screen.dart';
 import 'package:management_app/presentation/screens/modify_profile_screen.dart';
@@ -54,14 +56,19 @@ class ProfileScreen extends StatelessWidget {
   List<Widget> _listOptionByRole(context) {
     return [
       _optionItem('Update infomation', Colors.black, () {
+        if (GlobalVariable.scope != 'Restaurant' &&
+            GlobalVariable.scope != 'Admin') {
+          showSnackBar(context, "You don't have permission to access this feature");
+          return;
+        }
         Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => ModifyProfileScreen(
-              stream: stream,
+            context,
+            MaterialPageRoute(
+              builder: (context) => ModifyProfileScreen(
+                stream: stream,
+              ),
             ),
-          ),
-        );
+          );
       }, false),
       _optionItem(
         'Change password',
@@ -80,8 +87,8 @@ class ProfileScreen extends StatelessWidget {
         'Sign out',
         Colors.red,
         () async {
-          GlobalVariable.profile = null;
-          GlobalVariable.jwt = '';
+          await Provider.of<HubProvider>(context, listen: false)
+              .closeConnection();
           Provider.of<UserStateProvider>(context, listen: false).logout();
         },
         true,

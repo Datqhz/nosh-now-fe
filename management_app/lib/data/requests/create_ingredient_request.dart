@@ -18,7 +18,7 @@ class CreateIngredientRequest {
       'ingredientName': ingredientName,
       'image': image,
       'quantity': quantity,
-      'unit': unit.index
+      'unit': unit.index + 1
     };
   }
 }

@@ -6,6 +6,7 @@ import 'package:management_app/data/models/food_data.dart';
 import 'package:management_app/data/providers/food_list_provider.dart';
 import 'package:management_app/data/repositories/food_repository.dart';
 import 'package:management_app/presentation/screens/restaurant/modify_food_screen.dart';
+import 'package:management_app/presentation/widget/required_ingredient_item.dart';
 
 import 'package:provider/provider.dart';
 
@@ -73,7 +74,7 @@ class FoodDetailManagementScreen extends StatelessWidget {
                                       textAlign: TextAlign.left,
                                       maxLines: 1,
                                       style: const TextStyle(
-                                        fontSize: 22.0,
+                                        fontSize: 20.0,
                                         fontWeight: FontWeight.w800,
                                         height: 1.2,
                                         color: Color.fromRGBO(49, 49, 49, 1),
@@ -91,7 +92,7 @@ class FoodDetailManagementScreen extends StatelessWidget {
                                     textAlign: TextAlign.center,
                                     maxLines: 1,
                                     style: const TextStyle(
-                                      fontSize: 22.0,
+                                      fontSize: 20.0,
                                       fontWeight: FontWeight.w800,
                                       height: 1.2,
                                       color: Color.fromRGBO(49, 49, 49, 1),
@@ -103,24 +104,47 @@ class FoodDetailManagementScreen extends StatelessWidget {
                               const SizedBox(
                                 height: 12,
                               ),
-                              Expanded(
-                                child: Text(
-                                  foodData.foodDescription,
-                                  textAlign: TextAlign.left,
-                                  maxLines: 10,
-                                  style: const TextStyle(
-                                    fontSize: 16.0,
-                                    fontWeight: FontWeight.w400,
-                                    height: 1.2,
-                                    color: Color.fromRGBO(49, 49, 49, 1),
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
+                              Text(
+                                foodData.foodDescription,
+                                textAlign: TextAlign.left,
+                                maxLines: 10,
+                                style: const TextStyle(
+                                  fontSize: 16.0,
+                                  fontWeight: FontWeight.w400,
+                                  height: 1.2,
+                                  color: Color.fromRGBO(49, 49, 49, 1),
+                                  overflow: TextOverflow.ellipsis,
                                 ),
                               ),
-                              const Expanded(child: SizedBox()),
                               const SizedBox(
                                 height: 20,
                               ),
+                              const Text(
+                                'Ingredients',
+                                textAlign: TextAlign.left,
+                                maxLines: 10,
+                                style: TextStyle(
+                                  fontSize: 16.0,
+                                  fontWeight: FontWeight.w600,
+                                  height: 1.2,
+                                  color: Color.fromRGBO(49, 49, 49, 1),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                              const SizedBox(
+                                height: 8,
+                              ),
+                              Expanded(
+                                  child: SingleChildScrollView(
+                                child: Column(
+                                  children: List.generate(
+                                      foodData.foodIngredients.length,
+                                      (index) => RequiredIngredientItem(
+                                            ingredient:
+                                                foodData.foodIngredients[index],
+                                          )),
+                                ),
+                              ))
                             ],
                           ),
                         ),

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:nosh_now_application/core/streams/order_detail_notifier.dart';
-import 'package:nosh_now_application/core/utils/image.dart';
 import 'package:nosh_now_application/data/responses/get_food_by_restaurant_response.dart';
 
 // ignore: must_be_immutable
@@ -92,21 +91,37 @@ class FoodItemState extends State<FoodItem> {
             const Expanded(child: SizedBox()),
             // price
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              child: Text(
-                NumberFormat.currency(locale: 'vi_VN', symbol: '₫')
-                    .format(widget.food.price),
-                textAlign: TextAlign.center,
-                maxLines: 1,
-                style: const TextStyle(
-                  fontSize: 14.0,
-                  fontWeight: FontWeight.w600,
-                  height: 1.2,
-                  color: Color.fromRGBO(49, 49, 49, 1),
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-            ),
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      NumberFormat.currency(locale: 'vi_VN', symbol: '₫')
+                          .format(widget.food.price),
+                      textAlign: TextAlign.center,
+                      maxLines: 1,
+                      style: const TextStyle(
+                        fontSize: 14.0,
+                        fontWeight: FontWeight.w600,
+                        height: 1.2,
+                        color: Color.fromRGBO(49, 49, 49, 1),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    Text(
+                      'Available: ${widget.food.available}',
+                      textAlign: TextAlign.center,
+                      maxLines: 1,
+                      style: const TextStyle(
+                        fontSize: 14.0,
+                        fontWeight: FontWeight.w400,
+                        height: 1.2,
+                        color: Color.fromRGBO(49, 49, 49, 1),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                )),
             const SizedBox(
               height: 12,
             ),

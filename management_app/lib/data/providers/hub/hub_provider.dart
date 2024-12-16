@@ -14,10 +14,8 @@ class HubProvider with ChangeNotifier {
         .withUrl(
             "${GlobalVariable.hubUrl}/order-status",
             HttpConnectionOptions(
-              logging: (level, message) =>
-                  print('$message'),
-              accessTokenFactory: () async => GlobalVariable.jwt
-            ))
+                logging: (level, message) => print('$message'),
+                accessTokenFactory: () async => GlobalVariable.jwt))
         .withAutomaticReconnect([0, 2000, 10000, 30000]).build();
 
     _hubConnection!.onclose((error) {
@@ -51,7 +49,15 @@ class HubProvider with ChangeNotifier {
         .map((e) => Message.fromJson(e as Map<String, dynamic>))
         .toList();
     for (var message in list) {
-      LocalNotificationService().showNotification(message.title, message.content);
+      LocalNotificationService()
+          .showNotification(message.title, message.content);
     }
+  }
+
+  Future<void> closeConnection() async {
+    _hubConnection!.off("NotifyOrderStatusChange");
+    await _hubConnection!.stop();
+    _hubConnection = null;
+    
   }
 }

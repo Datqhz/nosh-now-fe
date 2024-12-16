@@ -2,6 +2,7 @@ import 'package:calendar_view/calendar_view.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:management_app/core/constants/global_variable.dart';
 import 'package:management_app/core/utils/dialog.dart';
 import 'package:management_app/core/utils/snack_bar.dart';
 import 'package:management_app/core/utils/time_picker.dart';
@@ -110,7 +111,7 @@ class _ManageCalendarScreenState extends State<ManageCalendarScreen> {
                         maxMonth: DateTime(2050),
                         initialMonth: DateTime.now(),
                         cellAspectRatio: 1,
-                        onCellTap: (events, date) {
+                        onCellTap: GlobalVariable.scope == 'Restaurant' ? (events, date) {
                           if (events.isEmpty) {
                             showDialog(
                                 context: context,
@@ -223,7 +224,7 @@ class _ManageCalendarScreenState extends State<ManageCalendarScreen> {
                                                   readOnly: true,
                                                   decoration:
                                                       const InputDecoration(
-                                                    hintText: "Start time",
+                                                    hintText: "End time",
                                                     enabledBorder:
                                                         UnderlineInputBorder(
                                                       borderSide: BorderSide(
@@ -319,8 +320,12 @@ class _ManageCalendarScreenState extends State<ManageCalendarScreen> {
                                                 onPressed: () async {
                                                   if (_formKey.currentState!
                                                       .validate()) {
-                                                    if (_startTime.value!.getTotalMinutes >= _endTime.value!.getTotalMinutes) {
-                                                      showSnackBar(context, 'start time must be less than end time');
+                                                    if (_startTime.value!
+                                                            .getTotalMinutes >=
+                                                        _endTime.value!
+                                                            .getTotalMinutes) {
+                                                      showSnackBar(context,
+                                                          'start time must be less than end time');
                                                       return;
                                                     }
                                                     var startTime = DateTime(
@@ -400,9 +405,9 @@ class _ManageCalendarScreenState extends State<ManageCalendarScreen> {
                                   );
                                 });
                           }
-                        },
+                        } : null,
                         startDay: WeekDays.sunday,
-                        onEventLongTap: (event, date) {
+                        onEventLongTap: GlobalVariable.scope == 'Restaurant' ?(event, date) {
                           showDeleteDialog(
                             context,
                             'work day',
@@ -427,7 +432,7 @@ class _ManageCalendarScreenState extends State<ManageCalendarScreen> {
                               }
                             },
                           );
-                        },
+                        } : null,
                         onEventTap: (event, date) =>
                             currentPick.value = event.event,
                         onPageChange: (date, page) {
