@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:nosh_now_application/core/streams/change_stream.dart';
 import 'package:nosh_now_application/core/utils/distance.dart';
 import 'package:nosh_now_application/core/utils/map.dart';
 import 'package:nosh_now_application/data/repositories/location_repository.dart';
@@ -12,12 +13,13 @@ class PickLocationScreen extends StatefulWidget {
   PickLocationScreen({super.key, required this.currentPick});
 
   GetSavedLocationData currentPick;
-
   @override
   State<PickLocationScreen> createState() => _PickLocationScreenState();
 }
 
 class _PickLocationScreenState extends State<PickLocationScreen> {
+  ChangeStream stream = ChangeStream();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -128,35 +130,40 @@ class _PickLocationScreenState extends State<PickLocationScreen> {
                             color: Color.fromRGBO(49, 49, 49, 1),
                             overflow: TextOverflow.ellipsis),
                       ),
-                      FutureBuilder(
-                          future: LocationRepository().getSavedLocations(context),
-                          builder: (context, snapshot) {
-                            if (snapshot.connectionState == ConnectionState.done && snapshot.hasData) {
-                              return Column(
-                                children: List.generate(snapshot.data!.length,
-                                    (index) {
-                                  return GestureDetector(
-                                    onTap: () {
-                                      if (snapshot.data![index].id != widget.currentPick.id) {
-                                        Navigator.pop(context, snapshot.data![index]);
-                                      }
-                                    },
-                                    child: SavedLocation(
-                                      location: snapshot.data![index],
-                                      isPicked:
-                                          (snapshot.data![index].id == widget.currentPick.id),
-                                    ),
+                      StreamBuilder<void>(
+                        stream: stream.stream,
+                        builder: (context, snapshot) {
+                          return FutureBuilder(
+                              future: LocationRepository().getSavedLocations(context),
+                              builder: (context, snapshot) {
+                                if (snapshot.connectionState == ConnectionState.done && snapshot.hasData) {
+                                  return Column(
+                                    children: List.generate(snapshot.data!.length,
+                                        (index) {
+                                      return GestureDetector(
+                                        onTap: () {
+                                          if (snapshot.data![index].id != widget.currentPick.id) {
+                                            Navigator.pop(context, snapshot.data![index]);
+                                          }
+                                        },
+                                        child: SavedLocation(
+                                          location: snapshot.data![index],
+                                          isPicked:
+                                              (snapshot.data![index].id == widget.currentPick.id),
+                                        ),
+                                      );
+                                    }),
                                   );
-                                }),
-                              );
-                            }
-                            return const Center(
-                              child: SpinKitCircle(
-                                color: Colors.black,
-                                size: 50,
-                              ),
-                            );
-                          }),
+                                }
+                                return const Center(
+                                  child: SpinKitCircle(
+                                    color: Colors.black,
+                                    size: 50,
+                                  ),
+                                );
+                              });
+                        }
+                      ),
                       const SizedBox(
                         height: 70,
                       )
@@ -225,11 +232,13 @@ class _PickLocationScreenState extends State<PickLocationScreen> {
                 right: 0,
                 child: GestureDetector(
                   onTap: () async {
-                    var newLocation = await Navigator.push(
+                    bool isAdded = await Navigator.push(
                         context,
                         MaterialPageRoute(
                             builder: (context) => PickLocationFromMapScreen()));
-                    Navigator.pop(context, newLocation);
+                    if(isAdded){
+                      stream.notifyChange();
+                    }
                   },
                   child: Container(
                       height: 50,

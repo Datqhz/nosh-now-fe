@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:nosh_now_application/core/constants/constants.dart';
 import 'package:nosh_now_application/data/repositories/order_repository.dart';
 
 class CountdownButton extends StatefulWidget {
@@ -17,7 +18,7 @@ class _CountdownButtonState extends State<CountdownButton> {
   @override
   void initState() {
     super.initState();
-    countdownValue = ValueNotifier<int>(60);
+    countdownValue = ValueNotifier<int>(Constants.cancelOrderTimeout);
     startCountdown();
   }
 

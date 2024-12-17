@@ -46,13 +46,18 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
   final Future<PaymentConfiguration> _googlePayConfigFuture =
       PaymentConfiguration.fromAsset('json/ggpay_config.json');
 
+  late ValueNotifier<int> countdownValue;
+  Timer? _timer;
+
   Future setupData(BuildContext context) async {
     isLoading.value = true;
     var orderInfo =
         await OrderRepository().getOrderInitById(widget.orderId, context);
     if (orderInfo == null) {
+      isLoading.value = false;
       return;
     }
+
     order.value = orderInfo;
     isLoading.value = false;
     currentLocationPicked.addListener(calcDeliveryOnChange);
@@ -88,6 +93,26 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
   void initState() {
     super.initState();
     setupData(context);
+    countdownValue = ValueNotifier<int>(Constants.placeOrderTimeout);
+    startCountdown();
+  }
+
+  void startCountdown() {
+    if (_timer != null && _timer!.isActive) return;
+    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      if (countdownValue.value > 0) {
+        countdownValue.value = countdownValue.value - 1;
+      } else {
+        timer.cancel();
+        _removeSelf();
+      }
+    });
+  }
+
+  void _removeSelf() {
+    if (mounted) {
+      Navigator.pop(context);
+    }
   }
 
   @override
@@ -138,6 +163,8 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
                                     if (value != null) {
                                       return Container(
                                         height: 80,
+                                        width:
+                                            MediaQuery.of(context).size.width,
                                         color: Colors.white,
                                         padding: const EdgeInsets.symmetric(
                                             horizontal: 20),
@@ -153,63 +180,75 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
                                             const SizedBox(
                                               width: 8,
                                             ),
-                                            Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              children: [
-                                                Text(
-                                                  '${value.name} - ${value.phone}',
-                                                  maxLines: 1,
-                                                  style: const TextStyle(
-                                                      fontSize: 16.0,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      color: Color.fromRGBO(
-                                                          49, 49, 49, 1),
-                                                      overflow: TextOverflow
-                                                          .ellipsis),
-                                                ),
-                                                FutureBuilder(
-                                                    future: getAddressFromLatLng(
-                                                        splitCoordinatorString(
-                                                            value.coordinate)),
-                                                    builder: (context,
-                                                        addressSnapshot) {
-                                                      if (addressSnapshot
-                                                                  .connectionState ==
-                                                              ConnectionState
-                                                                  .done &&
-                                                          addressSnapshot
-                                                              .hasData) {
-                                                        return Text(
-                                                          addressSnapshot.data!,
-                                                          maxLines: 1,
-                                                          style: const TextStyle(
-                                                              fontSize: 14.0,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w400,
-                                                              color: Color
-                                                                  .fromRGBO(
-                                                                      49,
-                                                                      49,
-                                                                      49,
-                                                                      1),
-                                                              overflow:
-                                                                  TextOverflow
-                                                                      .ellipsis),
-                                                        );
-                                                      }
-                                                      return const Text('');
-                                                    }),
-                                              ],
+                                            Expanded(
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: [
+                                                  SizedBox(
+                                                    child: Text(
+                                                      '${value.name} - ${value.phone}',
+                                                      maxLines: 1,
+                                                      style: const TextStyle(
+                                                          fontSize: 16.0,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          color: Color.fromRGBO(
+                                                              49, 49, 49, 1),
+                                                          overflow: TextOverflow
+                                                              .ellipsis),
+                                                    ),
+                                                  ),
+                                                  FutureBuilder(
+                                                      future: getAddressFromLatLng(
+                                                          splitCoordinatorString(
+                                                              value
+                                                                  .coordinate)),
+                                                      builder: (context,
+                                                          addressSnapshot) {
+                                                        if (addressSnapshot
+                                                                    .connectionState ==
+                                                                ConnectionState
+                                                                    .done &&
+                                                            addressSnapshot
+                                                                .hasData) {
+                                                          return Row(
+                                                            children: [
+                                                              Expanded(
+                                                                child: Text(
+                                                                  addressSnapshot
+                                                                      .data!,
+                                                                  maxLines: 1,
+                                                                  style: const TextStyle(
+                                                                      fontSize:
+                                                                          14.0,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w400,
+                                                                      color: Color
+                                                                          .fromRGBO(
+                                                                              49,
+                                                                              49,
+                                                                              49,
+                                                                              1),
+                                                                      overflow:
+                                                                          TextOverflow
+                                                                              .ellipsis),
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          );
+                                                        }
+                                                        return const Text('');
+                                                      }),
+                                                ],
+                                              ),
                                             ),
-                                            const Expanded(
-                                                child: SizedBox(
+                                            SizedBox(
                                               width: 12,
-                                            )),
+                                            ),
                                             const Icon(
                                               Icons.chevron_right,
                                               color: Colors.red,
@@ -273,64 +312,109 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
                               color: Colors.white,
                               width: MediaQuery.of(context).size.width,
                               padding: const EdgeInsets.symmetric(
-                                  vertical: 5, horizontal: 50),
+                                  vertical: 5, horizontal: 20),
                               child: ValueListenableBuilder(
                                   valueListenable: order,
                                   builder: (context, orderValue, child) {
                                     if (orderValue == null) {
                                       return SizedBox();
                                     }
-                                    return Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
+                                    return Row(
+                                      mainAxisSize: MainAxisSize.max,
                                       children: [
-                                        Text(
-                                          orderValue.restaurantName,
-                                          maxLines: 1,
-                                          style: const TextStyle(
-                                              fontSize: 16.0,
-                                              fontWeight: FontWeight.bold,
-                                              color:
-                                                  Color.fromRGBO(49, 49, 49, 1),
-                                              overflow: TextOverflow.ellipsis),
+                                        GestureDetector(
+                                          onTap: () {
+                                            Navigator.pop(context);
+                                          },
+                                          child: const Icon(
+                                            CupertinoIcons.xmark,
+                                            color: Colors.black,
+                                            size: 22,
+                                          ),
                                         ),
-                                        FutureBuilder(
-                                            future: checkPermissions(),
-                                            builder: (context, snapshot) {
-                                              if (snapshot.connectionState ==
-                                                  ConnectionState.done) {
-                                                return Text(
-                                                  'Distance to your location: ${calcDistanceInKm(coordinator1: orderValue.restaurantCoordinate, coordinator2: '${snapshot.data!.latitude}-${snapshot.data!.longitude}')} km',
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            children: [
+                                              Text(
+                                                orderValue.restaurantName,
+                                                maxLines: 1,
+                                                style: const TextStyle(
+                                                    fontSize: 16.0,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Color.fromRGBO(
+                                                        49, 49, 49, 1),
+                                                    overflow:
+                                                        TextOverflow.ellipsis),
+                                              ),
+                                              FutureBuilder(
+                                                  future: checkPermissions(),
+                                                  builder: (context, snapshot) {
+                                                    if (snapshot
+                                                            .connectionState ==
+                                                        ConnectionState.done) {
+                                                      return Text(
+                                                        'Distance: ${calcDistanceInKm(coordinator1: orderValue.restaurantCoordinate, coordinator2: '${snapshot.data!.latitude}-${snapshot.data!.longitude}')} km',
+                                                        maxLines: 1,
+                                                        style: const TextStyle(
+                                                            fontSize: 14.0,
+                                                            fontWeight:
+                                                                FontWeight.w400,
+                                                            color:
+                                                                Color.fromRGBO(
+                                                                    49,
+                                                                    49,
+                                                                    49,
+                                                                    1),
+                                                            overflow:
+                                                                TextOverflow
+                                                                    .ellipsis),
+                                                      );
+                                                    }
+                                                    return const SizedBox();
+                                                  })
+                                            ],
+                                          ),
+                                        ),
+                                        ValueListenableBuilder(
+                                          valueListenable: countdownValue,
+                                          builder: (context, value, child) {
+                                            return Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                Text(
+                                                  '${value}s',
                                                   maxLines: 1,
                                                   style: const TextStyle(
                                                       fontSize: 14.0,
                                                       fontWeight:
                                                           FontWeight.w400,
                                                       color: Color.fromRGBO(
-                                                          49, 49, 49, 1),
+                                                          220, 4, 4, 1),
                                                       overflow: TextOverflow
                                                           .ellipsis),
-                                                );
-                                              }
-                                              return const SizedBox();
-                                            })
+                                                ),
+                                                Text(
+                                                  'remaining',
+                                                  maxLines: 1,
+                                                  style: const TextStyle(
+                                                      fontSize: 14.0,
+                                                      fontWeight:
+                                                          FontWeight.w400,
+                                                      color: Color.fromRGBO(
+                                                          220, 4, 4, 1),
+                                                      overflow: TextOverflow
+                                                          .ellipsis),
+                                                ),
+                                              ],
+                                            );
+                                          },
+                                        ),
                                       ],
                                     );
                                   }),
-                            ),
-                            Positioned(
-                              top: 18,
-                              left: 20,
-                              child: GestureDetector(
-                                onTap: () {
-                                  Navigator.pop(context);
-                                },
-                                child: const Icon(
-                                  CupertinoIcons.xmark,
-                                  color: Colors.black,
-                                  size: 22,
-                                ),
-                              ),
                             ),
                           ],
                         ),
@@ -681,7 +765,8 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
                                                         .final_price,
                                                   )
                                                 ],
-                                                type: GooglePayButtonType.buy,
+                                                type: GooglePayButtonType
+                                                    .checkout,
                                                 onPaymentResult:
                                                     (paymentRs) async {
                                                   if (delivery.value != 0) {
@@ -702,7 +787,6 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
                                                                   .value!
                                                                   .coordinate),
                                                     );
-
                                                     var isCheckedout =
                                                         await OrderRepository()
                                                             .checkoutOrder(
@@ -713,15 +797,16 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
                                                           context,
                                                           (route) =>
                                                               route.isFirst);
-                                                      // Navigator.push(
-                                                      //   context,
-                                                      //   MaterialPageRoute(
-                                                      //     builder: (context) =>
-                                                      //         OrderProcessScreen(
-                                                      //       order: widget.order,
-                                                      //     ),
-                                                      //   ),
-                                                      // );
+                                                      Navigator.push(
+                                                        context,
+                                                        MaterialPageRoute(
+                                                          builder: (context) =>
+                                                              OrderProcessScreen(
+                                                            orderId:
+                                                                widget.orderId,
+                                                          ),
+                                                        ),
+                                                      );
                                                       showSnackBar(context,
                                                           "Checkout successful!");
                                                     }
@@ -732,7 +817,7 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
                                                     }
                                                   }
                                                 },
-                                                cornerRadius: 22,
+                                                cornerRadius: 8,
                                                 width: double.maxFinite,
                                                 loadingIndicator: const Center(
                                                   child:
@@ -765,6 +850,7 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
                       padding:
                           EdgeInsets.symmetric(horizontal: 8, vertical: 12),
                       width: MediaQuery.of(context).size.width - 30,
+                      height: 100,
                       decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(8)),

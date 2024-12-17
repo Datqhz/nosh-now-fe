@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:nosh_now_application/core/services/image_storage_service.dart';
 import 'package:nosh_now_application/core/utils/image.dart';
 import 'package:nosh_now_application/core/utils/map.dart';
 import 'package:nosh_now_application/core/utils/validate.dart';
@@ -470,12 +471,19 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                           final phone =
                                               _phoneController.text.trim();
 
+                                          var newAvt;
+                                          if (_avatar.value != null) {
+                                            newAvt = await ImageStorageService
+                                                .uploadAvatarImage(
+                                                    _avatar.value);
+                                          }
+
                                           var request = new RegisterRequest(
                                               displayname: displayName,
                                               userName: email,
                                               password: password,
                                               phoneNumber: phone,
-                                              avatar: '',
+                                              avatar: newAvt ?? '',
                                               coordinate: coordinator.value);
                                           var isCreated =
                                               await AccountRepository()

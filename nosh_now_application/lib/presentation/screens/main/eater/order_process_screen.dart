@@ -313,7 +313,10 @@ class _OrderProcessScreenState extends State<OrderProcessScreen> {
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               GestureDetector(
-                                onTap: () => Navigator.pop(context),
+                                onTap: () {
+                                  // Navigator.pop(context);
+                                  Navigator.pop(context);
+                                },
                                 child: const Icon(
                                   CupertinoIcons.arrow_left,
                                   color: Colors.black,
