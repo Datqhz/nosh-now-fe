@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:management_app/core/constants/global_variable.dart';
+import 'package:management_app/core/utils/snack_bar.dart';
 import 'package:management_app/presentation/screens/profile_screen.dart';
 import 'package:management_app/presentation/screens/restaurant/food_management_screen.dart';
 import 'package:management_app/presentation/screens/restaurant/manage_order_screen.dart';
@@ -22,6 +24,10 @@ class _MainScreenState extends State<MainScreen> {
 
   void _activateBottomBarItem(int newIdx) {
     if (newIdx != _bottomIdx.value) {
+      if(newIdx == 2 && GlobalVariable.scope != 'Restaurant' && GlobalVariable.scope != 'Chef'){
+        showSnackBar(context, "You don't have permission to access this feature");
+        return;
+      }
       int temp = _bottomIdx.value;
       bottomBarItemKeys[temp].currentState!.unActive();
       _bottomIdx.value = newIdx;

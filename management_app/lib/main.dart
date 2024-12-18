@@ -1,5 +1,6 @@
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/material.dart';
+import 'package:management_app/data/providers/category_list_provider.dart';
 import 'package:management_app/data/providers/food_list_provider.dart';
 import 'package:management_app/data/providers/hub/hub_provider.dart';
 import 'package:management_app/data/providers/ingredient_list_provider.dart';
@@ -27,10 +28,13 @@ void main() {
       debug: true);
   runApp(MultiProvider(
     providers: [
-      ChangeNotifierProvider(create: (_) => UserStateProvider()),
       ChangeNotifierProvider(create: (context) => HubProvider()),
+      ChangeNotifierProvider(create: (_) => UserStateProvider()),
+      ChangeNotifierProvider(create: (context) => CategoryListProvider()),
       ChangeNotifierProvider(create: (context) => FoodListProvider()),
-      ChangeNotifierProvider(create: (context) => IngredientListProvider())
+      ChangeNotifierProvider(
+        create: (context) => IngredientListProvider(),
+      )
     ],
     child: const MyApp(),
   ));

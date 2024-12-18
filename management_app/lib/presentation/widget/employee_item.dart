@@ -89,7 +89,7 @@ class EmployeeItem extends StatelessWidget {
                             width: 4,
                           ),
                           Text(
-                            employee.isActive ? 'Active' : 'Deleted',
+                            employee.isActive ? 'Active' : 'Unactive',
                             textAlign: TextAlign.center,
                             maxLines: 1,
                             style: const TextStyle(

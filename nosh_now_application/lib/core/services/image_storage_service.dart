@@ -1,9 +1,10 @@
 import 'dart:convert';
 
-import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
+import 'package:http/http.dart' as http;
 
 class ImageStorageService {
+
   static Future<String?> uploadAvatarImage(XFile? imageFile) async {
     final url = Uri.parse('https://api.cloudinary.com/v1_1/dyhjqna2u/upload');
     final request = http.MultipartRequest('POST', url);

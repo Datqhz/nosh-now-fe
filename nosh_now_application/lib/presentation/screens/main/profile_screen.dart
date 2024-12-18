@@ -6,6 +6,7 @@ import 'package:nosh_now_application/data/providers/user_state_provider.dart';
 import 'package:nosh_now_application/presentation/screens/main/change_password_screen.dart';
 import 'package:nosh_now_application/presentation/screens/main/eater/location_management_screen.dart';
 import 'package:nosh_now_application/presentation/screens/main/modify_profile_screen.dart';
+import 'package:nosh_now_application/presentation/wrapper.dart';
 import 'package:provider/provider.dart';
 
 class ProfileScreen extends StatelessWidget {
@@ -98,6 +99,8 @@ class ProfileScreen extends StatelessWidget {
           GlobalVariable.jwt = '';
           Provider.of<UserStateProvider>(context, listen: false).logout();
           Navigator.pop(context);
+          Navigator.push(
+              context, MaterialPageRoute(builder: (context) => Wrapper()));
         },
         true,
       )

@@ -4,7 +4,6 @@ import 'package:nosh_now_application/core/streams/change_stream.dart';
 import 'package:nosh_now_application/core/utils/dialog.dart';
 import 'package:nosh_now_application/core/utils/distance.dart';
 import 'package:nosh_now_application/core/utils/map.dart';
-import 'package:nosh_now_application/core/utils/snack_bar.dart';
 import 'package:nosh_now_application/data/repositories/location_repository.dart';
 import 'package:nosh_now_application/data/responses/get_saved_locations_response.dart';
 import 'package:nosh_now_application/presentation/screens/main/pick_location_from_map.dart';
@@ -23,7 +22,7 @@ class LocationManagementItem extends StatelessWidget {
         builder: (context, snapshot) {
           return Container(
             padding: const EdgeInsets.only(bottom: 8, top: 12),
-            width: MediaQuery.of(context).size.width-40,
+            width: MediaQuery.of(context).size.width - 40,
             decoration: const BoxDecoration(
               border: Border(
                 bottom: BorderSide(
@@ -133,12 +132,10 @@ class LocationManagementItem extends StatelessWidget {
                       onTap: () => showDeleteDialog(
                           context, 'location', location.name, () async {
                         var rs = await LocationRepository()
-                            .deleteSavedLocation(location.id);
+                            .deleteSavedLocation(location.id, context);
                         if (rs) {
-                          showSnackBar(context, "Delete successfully");
+                          Navigator.pop(context);
                           notifier.notifyChange();
-                        } else {
-                          showSnackBar(context, "Delete failed");
                         }
                       }),
                       child: const Icon(

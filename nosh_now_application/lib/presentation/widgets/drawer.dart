@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:nosh_now_application/core/constants/global_variable.dart';
 import 'package:nosh_now_application/data/providers/user_state_provider.dart';
+import 'package:nosh_now_application/presentation/wrapper.dart';
 import 'package:provider/provider.dart';
 
 class MyDrawer extends StatefulWidget {
@@ -140,6 +141,8 @@ class _MyDrawerState extends State<MyDrawer> {
                                                 listen: false)
                                             .logout();
                                         Navigator.pop(context);
+                                        Navigator.pop(context);
+                                        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Wrapper()));
                                       },
                                       style: TextButton.styleFrom(
                                           minimumSize:

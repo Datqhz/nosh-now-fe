@@ -18,10 +18,11 @@ class CalendarRepository {
       "Authorization": "Bearer ${GlobalVariable.jwt}"
     };
     try {
+      var payload = request.toJson();
       Response response = await post(
           Uri.parse("${GlobalVariable.url}/core/api/v1/Calendar/AddCalendars"),
           headers: headers,
-          body: jsonEncode(request.toJson()));
+          body: jsonEncode(payload));
 
       Map<String, dynamic> data = json.decode(response.body);
       var responseData = GetCalendarsResponse.fromJson(data);
@@ -31,9 +32,9 @@ class CalendarRepository {
         return true;
       }
 
-      showSnackBar(context, responseData.statusText!);
+      showSnackBar(context, responseData.errorMessage!);
     } catch (e) {
-      showSnackBar(context, "An error has occured");
+      showSnackBar(context, "An error has occurred");
       print(e.toString());
     }
 

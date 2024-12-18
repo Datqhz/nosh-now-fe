@@ -6,8 +6,9 @@ import 'package:nosh_now_application/core/streams/change_stream.dart';
 import 'package:nosh_now_application/core/utils/distance.dart';
 import 'package:nosh_now_application/core/utils/map.dart';
 import 'package:nosh_now_application/core/utils/snack_bar.dart';
-import 'package:nosh_now_application/data/models/location.dart';
 import 'package:nosh_now_application/data/repositories/location_repository.dart';
+import 'package:nosh_now_application/data/requests/create_location_request.dart';
+import 'package:nosh_now_application/data/requests/update_location_request.dart';
 import 'package:nosh_now_application/data/responses/get_saved_locations_response.dart';
 
 class PickLocationFromMapScreen extends StatefulWidget {
@@ -165,18 +166,29 @@ class _PickLocationFromMapScreenState extends State<PickLocationFromMapScreen> {
                         if (_formKey.currentState!.validate()) {
                           String locationName = _nameController.text.trim();
                           String phone = _phoneController.text.trim();
-                          Location? rs = null;
+                          var lat = marker.value.latitude;
+                          var long = marker.value.longitude;
+                          var result = false;
                           if (widget.location != null) {
-                            // rs = await LocationRepository().update(location);
+                            var request = UpdateLocationRequest(
+                              locationId: widget.location!.id,
+                                locationName: locationName,
+                                phone: phone,
+                                coordinate: "$lat-$long");
+                            result = await LocationRepository().update(request, context);
                           } else {
-                            // rs = await LocationRepository()
-                            //     .create(location, 1);
+                            var request = CreateLocationRequest(
+                                name: locationName,
+                                phone: phone,
+                                coordinate: "$lat-$long");
+                            result = await LocationRepository()
+                                .createLocation(request, context);
                           }
-                          if (rs != null) {
+                          if (result) {
                             if (widget.notifier != null) {
                               widget.notifier!.notifyChange();
                             }
-                            Navigator.pop(context, rs);
+                            Navigator.pop(context, true);
                           }
                         }
                       },
@@ -242,11 +254,14 @@ class _PickLocationFromMapScreenState extends State<PickLocationFromMapScreen> {
                                           return Expanded(
                                             child: Text(
                                               snapshot.data!,
+                                              maxLines: 1,
                                               style: const TextStyle(
                                                   fontSize: 14,
                                                   color: Color.fromRGBO(
                                                       49, 49, 49, 1),
-                                                  fontWeight: FontWeight.w400),
+                                                  fontWeight: FontWeight.w400,
+                                                  overflow:
+                                                      TextOverflow.ellipsis),
                                             ),
                                           );
                                         }

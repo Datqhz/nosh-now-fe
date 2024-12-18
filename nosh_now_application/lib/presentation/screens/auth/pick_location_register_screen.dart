@@ -201,21 +201,21 @@ class _PickLocationRegisterScreenState
               left: 0,
               right: 0,
               child: Container(
+                width: MediaQuery.of(context).size.width,
                 color: Colors.white,
-                child: Padding(
-                  padding:
-                      const EdgeInsets.all(20),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      const Text(
-                        'Address: ',
-                        style: TextStyle(
-                            fontSize: 16,
-                            color: Color.fromRGBO(55, 55, 55, 0.5),
-                            fontWeight: FontWeight.w400),
-                      ),
-                      ValueListenableBuilder(
+                padding: EdgeInsets.all(20),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    const Text(
+                      'Address: ',
+                      style: TextStyle(
+                          fontSize: 16,
+                          color: Color.fromRGBO(55, 55, 55, 0.5),
+                          fontWeight: FontWeight.w400),
+                    ),
+                    Expanded(
+                      child: ValueListenableBuilder(
                           valueListenable: marker,
                           builder: (context, value, child) {
                             return FutureBuilder(
@@ -225,10 +225,12 @@ class _PickLocationRegisterScreenState
                                       value.longitude == 0) {
                                     return const Text(
                                       'Choose your location',
+                                      maxLines: 1,
                                       style: TextStyle(
                                           fontSize: 14,
                                           color: Color.fromRGBO(49, 49, 49, 1),
-                                          fontWeight: FontWeight.w400),
+                                          fontWeight: FontWeight.w400,
+                                          overflow: TextOverflow.ellipsis),
                                     );
                                   }
                                   if (snapshot.connectionState ==
@@ -236,10 +238,12 @@ class _PickLocationRegisterScreenState
                                       snapshot.hasData) {
                                     return Text(
                                       snapshot.data!,
+                                      maxLines: 1,
                                       style: const TextStyle(
                                           fontSize: 14,
                                           color: Color.fromRGBO(49, 49, 49, 1),
-                                          fontWeight: FontWeight.w400),
+                                          fontWeight: FontWeight.w400,
+                                          overflow: TextOverflow.ellipsis),
                                     );
                                   }
                                   return const Text(
@@ -251,8 +255,8 @@ class _PickLocationRegisterScreenState
                                   );
                                 });
                           }),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
             )

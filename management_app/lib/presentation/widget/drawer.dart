@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:management_app/core/constants/global_variable.dart';
 import 'package:management_app/data/providers/user_state_provider.dart';
+import 'package:management_app/presentation/screens/admin/category_management_screen.dart';
 import 'package:management_app/presentation/screens/restaurant/ingredient_management_screen.dart';
 import 'package:management_app/presentation/screens/restaurant/manage_calendar_screen.dart';
 import 'package:management_app/presentation/screens/restaurant/manage_employee_screen.dart';
@@ -209,38 +210,55 @@ class _MyDrawerState extends State<MyDrawer> {
                     MaterialPageRoute(
                         builder: (context) => const ManageCalendarScreen()));
               }),
-          DrawerItem(
-              icon: CupertinoIcons.calendar,
-              title: 'Ingredient',
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) =>
-                            const IngredientManagementScreen()));
-              }),
-          DrawerItem(
-              icon: CupertinoIcons.person_2,
-              title: 'Employee',
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const ManageEmployeeScreen()));
-              }),
-          DrawerItem(
-              icon: CupertinoIcons.chart_bar,
-              title: 'Statistic',
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) =>
-                            const RestaurantStatisticScreen()));
-              })
+          if (GlobalVariable.scope != 'ServiceStaff') ...[
+            DrawerItem(
+                icon: CupertinoIcons.book,
+                title: 'Ingredient',
+                onTap: () {
+                  Navigator.pop(context);
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              const IngredientManagementScreen()));
+                }),
+          ],
+          if (GlobalVariable.scope == 'Restaurant') ...[
+            DrawerItem(
+                icon: CupertinoIcons.person_2,
+                title: 'Employee',
+                onTap: () {
+                  Navigator.pop(context);
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const ManageEmployeeScreen()));
+                }),
+            DrawerItem(
+                icon: CupertinoIcons.chart_bar,
+                title: 'Statistic',
+                onTap: () {
+                  Navigator.pop(context);
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              const RestaurantStatisticScreen()));
+                }),
+          ],
+          if (GlobalVariable.scope == 'Admin') ...[
+            DrawerItem(
+                icon: CupertinoIcons.book,
+                title: 'Category',
+                onTap: () {
+                  Navigator.pop(context);
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              const CategoryManagementScreen()));
+                })
+          ]
         ],
       ),
     );

@@ -10,7 +10,7 @@ import 'package:nosh_now_application/data/responses/get_food_by_restaurant_respo
 import 'package:nosh_now_application/data/responses/get_order_init_response.dart';
 import 'package:nosh_now_application/data/responses/get_restaurants_response.dart';
 import 'package:nosh_now_application/presentation/screens/main/eater/food_detail_screen.dart';
-import 'package:nosh_now_application/presentation/screens/main/eater/prepare_order_screen.dart';
+import 'package:nosh_now_application/presentation/screens/main/eater/place_order_screen.dart';
 import 'package:nosh_now_application/presentation/widgets/food_item.dart';
 import 'package:provider/provider.dart';
 
@@ -302,7 +302,11 @@ class _RestaurantDetailScreenState extends State<RestaurantDetailScreen> {
               child: GestureDetector(
                 onTap: () {
                   if (order.value != null && !checkDetailsIsEmpty(context)) {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => PrepareOrderScreen(orderId: order.value!.orderId))); 
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => PlaceOrderScreen(
+                                orderId: order.value!.orderId)));
                   }
                 },
                 child: Container(

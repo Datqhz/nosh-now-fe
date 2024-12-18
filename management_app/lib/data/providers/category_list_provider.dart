@@ -9,7 +9,7 @@ class CategoryListProvider with ChangeNotifier {
   List<GetCategoriesData> get categories => _categories;
   bool get isLoading => _isLoading;
 
-  void updateCategory(int id, GetCategoriesData newCategory) {
+  void updateCategory(String id, GetCategoriesData newCategory) {
     final index = _categories.indexWhere((category) => category.categoryId == id);
     if (index != -1) {
       _categories[index].categoryName = newCategory.categoryName;

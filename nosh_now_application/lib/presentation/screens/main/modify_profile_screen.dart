@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:nosh_now_application/core/constants/global_variable.dart';
+import 'package:nosh_now_application/core/services/image_storage_service.dart';
 import 'package:nosh_now_application/core/streams/change_stream.dart';
 import 'package:nosh_now_application/core/utils/image.dart';
 import 'package:nosh_now_application/core/utils/validate.dart';
@@ -286,19 +287,20 @@ class _ModifyProfileScreenState extends State<ModifyProfileScreen> {
                         GestureDetector(
                           onTap: () async {
                             if (_formKey.currentState!.validate()) {
+                              var newAvt;
+                              if (avatar.value != null) {
+                                newAvt = await ImageStorageService.uploadAvatarImage(avatar.value);
+                              }
+                            
                               // Preprocess data
                               final name = _displayNameController.text.trim();
                               final phone = _phoneController.text.trim();
                               final request = UpdateProfileRequest(
                                 displayname: name,
                                 phoneNumber: phone, 
-                                avatar: GlobalVariable.profile!.avatar
+                                avatar: newAvt ?? GlobalVariable.profile!.avatar
                               );
 
-                              /* TODO: Handle upload image to cloudinary */
-                              // if (avatar.value != null) {
-                              //   base64 = await convertToBase64(avatar.value!);
-                              // }
 
                               final result = await CustomerRepository().updateProfile(request, context);
                               if(result){
