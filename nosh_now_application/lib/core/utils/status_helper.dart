@@ -25,15 +25,15 @@ class StatusHelper {
         return {'text': 'Arrived', 'color': Color(0xFF9370DB)}; // Tím Nhạt
       case 6: // Success
         return {
-          'text': 'Success',
+          'text': 'Delivered',
           'color': Color(0xFF228B22)
         }; // Xanh Lá Cây Đậm
       case 7: // Failed
-        return {'text': 'Failed', 'color': Color(0xFFFF0000)}; // Đỏ
+        return {'text': 'Success', 'color': Color(0xFFFF0000)}; // Đỏ
       case 8: // Canceled
-        return {'text': 'Canceled', 'color': Color(0xFF696969)}; // Xám Tối
+        return {'text': 'Failed', 'color': Color(0xFF696969)}; // Xám Tối
       case 9: // Rejected
-        return {'text': 'Rejected', 'color': Color(0xFF8B4513)}; // Nâu
+        return {'text': 'Cancelled', 'color': Color(0xFF8B4513)}; // Nâu
       default:
         return {'text': 'Unknown Status', 'color': Colors.black}; // Mặc định
     }

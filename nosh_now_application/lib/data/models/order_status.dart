@@ -5,8 +5,10 @@ enum OrderStatus {
   ReadyToPickup,
   Delivering,
   Arrived,
+  Delivered,
   Success,
   Failed,
   Canceled,
-  Rejected
+  Rejected,
+
 }

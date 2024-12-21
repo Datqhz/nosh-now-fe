@@ -40,7 +40,7 @@ class GetOrderInitByIdData {
     return GetOrderInitByIdData(
       orderId: json['orderId'],
       restaurantName: json['restaurantName'],
-      substantial: json['substantial'],
+      substantial: json['substantial'] / 1.0,
       restaurantCoordinate: json['restaurantCoordinate'],
       orderDetails: json['orderDetails'] != null
           ? (json['orderDetails'] as List)

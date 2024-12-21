@@ -6,8 +6,12 @@ import 'package:signalr_core/signalr_core.dart';
 
 class HubProvider with ChangeNotifier {
   HubConnection? _hubConnection = null;
-
+  late BuildContext _context;
   get hubConnection => _hubConnection;
+
+  HubProvider(BuildContext context){
+    _context = context;
+  }
 
   Future connectToNotifyHub() async {
     _hubConnection = HubConnectionBuilder()
@@ -53,6 +57,8 @@ class HubProvider with ChangeNotifier {
     for (var message in list) {
       LocalNotificationService()
           .showNotification(message.title, message.content);
+      LocalNotificationService()
+          .showToast(message.title, message.content, _context);
     }
   }
 }

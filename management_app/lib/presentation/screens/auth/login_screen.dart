@@ -1,5 +1,8 @@
+import 'package:elegant_notification/elegant_notification.dart';
+import 'package:elegant_notification/resources/arrays.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:management_app/core/services/notification_service.dart';
 import 'package:management_app/core/utils/validate.dart';
 import 'package:management_app/data/providers/user_state_provider.dart';
 import 'package:management_app/data/repositories/account_repository.dart';
@@ -107,8 +110,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                           width: 1,
                                         ),
                                       ),
-                                      focusedErrorBorder:
-                                          UnderlineInputBorder(
+                                      focusedErrorBorder: UnderlineInputBorder(
                                         borderSide: BorderSide(
                                           color: Color.fromRGBO(182, 0, 0, 1),
                                           width: 1,
@@ -224,13 +226,19 @@ class _LoginScreenState extends State<LoginScreen> {
                                   // forgot password
                                   Container(
                                     alignment: Alignment.center,
-                                    child: const Text(
-                                      'Forgot password?',
-                                      style: TextStyle(
-                                          fontSize: 16.0,
-                                          fontWeight: FontWeight.w400,
-                                          color:
-                                              Color.fromRGBO(40, 40, 40, 0.7)),
+                                    child: GestureDetector(
+                                      onTap: () {
+                                        LocalNotificationService().showToast(
+                                            "TEst", "Lorem isimpt", context);
+                                      },
+                                      child: const Text(
+                                        'Forgot password?',
+                                        style: TextStyle(
+                                            fontSize: 16.0,
+                                            fontWeight: FontWeight.w400,
+                                            color: Color.fromRGBO(
+                                                40, 40, 40, 0.7)),
+                                      ),
                                     ),
                                   ),
                                   const SizedBox(
@@ -249,28 +257,33 @@ class _LoginScreenState extends State<LoginScreen> {
                                               _emailController.text.trim();
                                           final password =
                                               _passwordController.text.trim();
-                                          var request = new LoginRequest(userName: email, password: password);
+                                          var request = new LoginRequest(
+                                              userName: email,
+                                              password: password);
                                           bool rs = await AccountRepository()
                                               .signIn(request, context);
-                                              
+
                                           if (rs) {
                                             Navigator.pop(context);
-                                            Provider.of<UserStateProvider>(context,
+                                            Provider.of<UserStateProvider>(
+                                                    context,
                                                     listen: false)
                                                 .login();
                                           }
                                         }
                                       },
                                       style: TextButton.styleFrom(
-                                          backgroundColor: Colors.black,
-                                          foregroundColor: const Color.fromRGBO(
-                                              240, 240, 240, 1),
-                                          textStyle: const TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.w600),
-                                          shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(8),),),
+                                        backgroundColor: Colors.black,
+                                        foregroundColor: const Color.fromRGBO(
+                                            240, 240, 240, 1),
+                                        textStyle: const TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w600),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                        ),
+                                      ),
                                       child: const Text('Sign in'),
                                     ),
                                   ),

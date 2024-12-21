@@ -672,7 +672,7 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
                                                             'payment')
                                                         .invokeMethod('momo', {
                                                   'orderId':
-                                                      order.value!.orderId,
+                                                      order.value!.orderId.toString(),
                                                   'amount':
                                                       total.value.toString()
                                                 });

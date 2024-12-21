@@ -45,7 +45,7 @@ class GetFoodByIdData{
       foodId: json['foodId'],
       foodName: json['foodName'],
       foodImage: json['foodImage'],
-      foodPrice: json['foodPrice'],
+      foodPrice: json['foodPrice'] / 1.0,
       foodDescription: json['foodDescription'] ?? null
     );
   }

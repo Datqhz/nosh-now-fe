@@ -39,6 +39,8 @@ class GetOrderByIdData{
   String restaurantCoordinate;
   String customerName;
   List<OrderDetailData> orderDetails;
+  String? proofOfDelivery;
+  String? confirmationPhoto;
   
   GetOrderByIdData({
     required this.orderId, 
@@ -53,7 +55,9 @@ class GetOrderByIdData{
     required this.substantial,
     required this.orderDetails,
     required this.restaurantCoordinate,
-    required this.customerName
+    required this.customerName,
+    this.proofOfDelivery,
+    this.confirmationPhoto
   });
 
   factory GetOrderByIdData.fromJson(Map<dynamic, dynamic> json) {
@@ -71,6 +75,8 @@ class GetOrderByIdData{
       substantial: json['substantial'] / 1.0,
       restaurantCoordinate: json['restaurantCoordinate'],
       orderDetails: json['orderDetails'] != null ? (json['orderDetails'] as List).map((e) => OrderDetailData.fromJson(e)).toList(): [],
+      proofOfDelivery: json['proofOfDelivery'] ?? null,
+      confirmationPhoto: json['confirmationPhoto'] ?? null
     );
   }
 }

@@ -28,7 +28,7 @@ void main() {
       debug: true);
   runApp(MultiProvider(
     providers: [
-      ChangeNotifierProvider(create: (context) => HubProvider()),
+      ChangeNotifierProvider(create: (context) => HubProvider(context)),
       ChangeNotifierProvider(create: (_) => UserStateProvider()),
       ChangeNotifierProvider(create: (context) => CategoryListProvider()),
       ChangeNotifierProvider(create: (context) => FoodListProvider()),

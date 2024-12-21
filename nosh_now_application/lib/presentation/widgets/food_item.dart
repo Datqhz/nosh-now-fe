@@ -109,7 +109,7 @@ class FoodItemState extends State<FoodItem> {
                       ),
                     ),
                     Text(
-                      'Available: ${widget.food.available}',
+                      'Available:${widget.food.available > 99 ? '99+' : widget.food.available}',
                       textAlign: TextAlign.center,
                       maxLines: 1,
                       style: const TextStyle(

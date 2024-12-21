@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:nosh_now_application/core/utils/distance.dart';
 import 'package:nosh_now_application/core/utils/map.dart';
 import 'package:nosh_now_application/core/utils/status_helper.dart';
+import 'package:nosh_now_application/data/models/order_status.dart';
 import 'package:nosh_now_application/data/repositories/order_repository.dart';
 import 'package:nosh_now_application/data/responses/get_order_by_id_response.dart';
 import 'package:nosh_now_application/presentation/widgets/order_detail_item.dart';
@@ -53,6 +54,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                 ),
               );
             }
+            print(orderValue.orderStatus);
             return Stack(
               children: [
                 Container(
@@ -394,6 +396,52 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                             )
                           ],
                         ),
+                        const SizedBox(
+                          height: 12,
+                        ),
+                        if (orderValue.orderStatus ==
+                            OrderStatus.Delivered.index) ...[
+                          const Text(
+                            'Deliver photo',
+                            maxLines: 1,
+                            style: TextStyle(
+                                fontSize: 16.0,
+                                fontWeight: FontWeight.bold,
+                                color: Color.fromRGBO(49, 49, 49, 1),
+                                overflow: TextOverflow.ellipsis),
+                          ),
+                          Container(
+                            child: Image.network(
+                              orderValue.confirmationPhoto!,
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 30,
+                          ),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 20),
+                            width: double.infinity,
+                            height: 44,
+                            child: TextButton(
+                              onPressed: () async {
+                                var result = await OrderRepository()
+                                    .receivedOrder(orderValue.orderId, context);
+                                if (result) {
+                                  fetchOrderData(context);
+                                }
+                              },
+                              style: TextButton.styleFrom(
+                                  backgroundColor: Colors.black,
+                                  foregroundColor: Colors.white,
+                                  textStyle: const TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600),
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8))),
+                              child: const Text('Received'),
+                            ),
+                          )
+                        ],
                         const SizedBox(
                           height: 50,
                         )

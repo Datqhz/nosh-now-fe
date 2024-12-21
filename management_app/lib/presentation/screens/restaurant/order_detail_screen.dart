@@ -1,13 +1,19 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:management_app/core/constants/global_variable.dart';
+import 'package:management_app/core/services/image_storage_service.dart';
 import 'package:management_app/core/utils/distance.dart';
+import 'package:management_app/core/utils/image.dart';
 import 'package:management_app/core/utils/map.dart';
 import 'package:management_app/core/utils/status_helper.dart';
 import 'package:management_app/data/repositories/order_detail_repository.dart';
 import 'package:management_app/data/repositories/order_repository.dart';
+import 'package:management_app/data/requests/deliver_order_request.dart';
 import 'package:management_app/data/requests/update_status_orderdetail_request.dart';
 import 'package:management_app/data/responses/get_order_by_id_response.dart';
 import 'package:management_app/presentation/widget/order_detail_item.dart';
@@ -25,6 +31,7 @@ class OrderDetailScreen extends StatefulWidget {
 class _OrderDetailScreenState extends State<OrderDetailScreen> {
   ValueNotifier<GetOrderByIdData?> order = ValueNotifier(null);
   ValueNotifier<List<int>> checkedList = ValueNotifier([]);
+  final ValueNotifier<XFile?> _proof = ValueNotifier(null);
 
   @override
   void initState() {
@@ -413,40 +420,68 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                         const SizedBox(
                           height: 20,
                         ),
+
                         if (GlobalVariable.scope == 'ServiceStaff' &&
-                            orderValue.orderStatus == 3)
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 20),
-                            width: double.infinity,
-                            height: 44,
-                            child: TextButton(
-                              onPressed: () async {
-                                // TODO
-                              },
-                              style: TextButton.styleFrom(
-                                backgroundColor: Colors.black,
-                                foregroundColor:
-                                    const Color.fromRGBO(240, 240, 240, 1),
-                                textStyle: const TextStyle(
-                                    fontSize: 16, fontWeight: FontWeight.w600),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                              ),
-                              child: Text(StatusHelper.getButtonTItle(
-                                  orderValue.orderStatus)['text']),
+                            orderValue.orderStatus == 3) ...[
+                          SizedBox(
+                            height: MediaQuery.of(context).size.height / 2.4,
+                            width: MediaQuery.of(context).size.width,
+                            child: Stack(
+                              children: [
+                                ValueListenableBuilder(
+                                    valueListenable: _proof,
+                                    builder: (context, value, child) {
+                                      return Image(
+                                        image: value != null
+                                            ? FileImage(File(value.path))
+                                                as ImageProvider<Object>
+                                            : const AssetImage(
+                                                'assets/images/black.jpg'),
+                                        height:
+                                            MediaQuery.of(context).size.height /
+                                                2.4,
+                                        width:
+                                            MediaQuery.of(context).size.width,
+                                        fit: BoxFit.cover,
+                                      );
+                                    }),
+                                GestureDetector(
+                                  onTap: () async {
+                                    XFile? img = await pickAnImageFromGallery();
+                                    if (img != null) {
+                                      _proof.value = img;
+                                    }
+                                  },
+                                  child: Container(
+                                      height:
+                                          MediaQuery.of(context).size.height /
+                                              2.4,
+                                      width: MediaQuery.of(context).size.width,
+                                      child: const Icon(
+                                        CupertinoIcons.photo,
+                                        color: Colors.white,
+                                        size: 80,
+                                      )),
+                                )
+                              ],
                             ),
                           ),
-                        if (GlobalVariable.scope == 'ServiceStaff' &&
-                            orderValue.orderStatus == 1) ...[
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 20),
                             width: double.infinity,
                             height: 44,
                             child: TextButton(
                               onPressed: () async {
+                                String? newImg = '';
+                                if (_proof.value != null) {
+                                  newImg = await ImageStorageService
+                                      .uploadIngredientImage(_proof.value);
+                                }
+                                var request = DeliverOrderRequest(
+                                    orderId: orderValue.orderId,
+                                    proof: newImg!);
                                 var result = await OrderRepository()
-                                    .acceptOrder(orderValue.orderId, context);
+                                    .deliverOrder(request, context);
                                 if (result) {
                                   reload();
                                 }
@@ -461,35 +496,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                                   borderRadius: BorderRadius.circular(8),
                                 ),
                               ),
-                              child: const Text('Accept'),
-                            ),
-                          ),
-                          const SizedBox(
-                            height: 12,
-                          ),
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 20),
-                            width: double.infinity,
-                            height: 44,
-                            child: TextButton(
-                              onPressed: () async {
-                                var result = await OrderRepository()
-                                    .rejectOrder(orderValue.orderId, context);
-                                if (result) {
-                                  reload();
-                                }
-                              },
-                              style: TextButton.styleFrom(
-                                backgroundColor: Colors.white,
-                                foregroundColor: Colors.red,
-                                textStyle: const TextStyle(
-                                    fontSize: 16, fontWeight: FontWeight.w600),
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                    side: const BorderSide(
-                                        color: Colors.red, width: 1)),
-                              ),
-                              child: const Text('Reject'),
+                              child: const Text('Deliver'),
                             ),
                           ),
                           const SizedBox(

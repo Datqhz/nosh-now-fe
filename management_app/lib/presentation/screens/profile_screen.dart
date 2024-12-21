@@ -7,6 +7,7 @@ import 'package:management_app/data/providers/hub/hub_provider.dart';
 import 'package:management_app/data/providers/user_state_provider.dart';
 import 'package:management_app/presentation/screens/change_password_screen.dart';
 import 'package:management_app/presentation/screens/modify_profile_screen.dart';
+import 'package:management_app/presentation/wrapper.dart';
 import 'package:provider/provider.dart';
 
 class ProfileScreen extends StatelessWidget {
@@ -58,17 +59,18 @@ class ProfileScreen extends StatelessWidget {
       _optionItem('Update infomation', Colors.black, () {
         if (GlobalVariable.scope != 'Restaurant' &&
             GlobalVariable.scope != 'Admin') {
-          showSnackBar(context, "You don't have permission to access this feature");
+          showSnackBar(
+              context, "You don't have permission to access this feature");
           return;
         }
         Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => ModifyProfileScreen(
-                stream: stream,
-              ),
+          context,
+          MaterialPageRoute(
+            builder: (context) => ModifyProfileScreen(
+              stream: stream,
             ),
-          );
+          ),
+        );
       }, false),
       _optionItem(
         'Change password',
@@ -90,6 +92,8 @@ class ProfileScreen extends StatelessWidget {
           await Provider.of<HubProvider>(context, listen: false)
               .closeConnection();
           Provider.of<UserStateProvider>(context, listen: false).logout();
+          Navigator.pushReplacement(context,
+              MaterialPageRoute(builder: (context) => const Wrapper()));
         },
         true,
       )
