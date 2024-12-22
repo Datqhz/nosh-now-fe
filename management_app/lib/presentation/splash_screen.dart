@@ -5,16 +5,17 @@ import 'package:management_app/data/providers/hub/hub_provider.dart';
 import 'package:management_app/data/repositories/employee_repository.dart';
 import 'package:management_app/data/repositories/restaurant_repository.dart';
 import 'package:management_app/presentation/main_screen.dart';
+import 'package:management_app/presentation/screens/admin/admin_view.dart';
 import 'package:provider/provider.dart';
 
 class SplashScreen extends StatelessWidget {
   const SplashScreen({super.key});
 
-  Future<void> getProfile(BuildContext context) async{
+  Future<void> getProfile(BuildContext context) async {
     final scope = GlobalVariable.scope;
-    if(scope == 'ServiceStaff' || scope == 'Chef'){
+    if (scope == 'ServiceStaff' || scope == 'Chef') {
       await EmployeeRepository().getProfile(context);
-    }else if(scope == 'Restaurant'){
+    } else if (scope == 'Restaurant') {
       await RestaurantRepository().getProfile(context);
     }
     Provider.of<HubProvider>(context, listen: false).connectToNotifyHub();
@@ -32,7 +33,9 @@ class SplashScreen extends StatelessWidget {
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => MainScreen(),
+                  builder: (context) => GlobalVariable.scope == "Admin"
+                      ? const AdminView()
+                      : MainScreen(),
                 ),
               );
             });

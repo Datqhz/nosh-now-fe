@@ -129,6 +129,15 @@ class _FoodManagementScreenState extends State<FoodManagementScreen> {
                       size: 50,
                     ));
                   }
+                  if (provider.foods.isEmpty) {
+                    return Center(
+                      child: Container(
+                        width: MediaQuery.of(context).size.width - 40,
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        child: Image.asset("assets/images/nodatafound.png"),
+                      ),
+                    );
+                  }
                   return ListView.builder(
                     itemCount: provider.foods.length,
                     itemBuilder: (context, index) {

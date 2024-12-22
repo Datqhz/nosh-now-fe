@@ -70,4 +70,35 @@ class RestaurantRepository {
 
     return false;
   }
+
+  Future<bool> updateWorkingStatus(
+      bool status, BuildContext context) async {
+    Map<String, String> headers = {
+      'Content-Type': 'application/json; charset=UTF-8',
+      "Authorization": "Bearer ${GlobalVariable.jwt}"
+    };
+    try {
+      Response response = await put(
+          Uri.parse(
+              "${GlobalVariable.url}/core/api/v1/Restaurant/WorkingStatus"),
+          headers: headers,
+          body: jsonEncode(<String, dynamic> {
+            'status': status
+          }));
+      int statusCode = response.statusCode;
+
+      Map<String, dynamic> data = json.decode(response.body);
+      var responseData = UpdateProfileResponse.fromJson(data);
+      if (statusCode == 200) {
+        return true;
+      }
+
+      showSnackBar(context, responseData.statusText!);
+    } catch (e) {
+      print(e.toString());
+      showSnackBar(context, 'Some error has occurred');
+    }
+
+    return false;
+  }
 }

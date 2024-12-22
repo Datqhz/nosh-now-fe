@@ -27,6 +27,7 @@ class ProfileData {
   String email;
   String phone;
   String? coordinate;
+  bool workingStatus;
 
   ProfileData(
       {required this.id,
@@ -34,7 +35,8 @@ class ProfileData {
       required this.avatar,
       required this.email,
       required this.phone,
-      this.coordinate});
+      this.coordinate,
+      required this.workingStatus});
 
   factory ProfileData.fromJson(Map<String, dynamic> json) {
     return ProfileData(
@@ -43,6 +45,7 @@ class ProfileData {
         avatar: json['avatar'],
         email: json['email'],
         phone: json['phone'],
-        coordinate: json['coordinate']);
+        coordinate: json['coordinate'],
+        workingStatus: json['workingStatus']);
   }
 }

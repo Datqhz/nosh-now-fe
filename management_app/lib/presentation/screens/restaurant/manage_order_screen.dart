@@ -223,18 +223,13 @@ class _ManageOrderScreenState extends State<ManageOrderScreen>
                         );
                       }
                       if (value.isEmpty) {
-                        return const Center(
-                          child: Text(
-                            "You don't have any order.",
-                            maxLines: 1,
-                            style: TextStyle(
-                              fontSize: 18.0,
-                              fontWeight: FontWeight.w500,
-                              color: Color.fromRGBO(49, 49, 49, 1),
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                        );
+                        return Center(
+                        child: Container(
+                          width: MediaQuery.of(context).size.width - 40,
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                          child: Image.asset("assets/images/nodatafound.png"),
+                        ),
+                      );
                       } else {
                         return Column(
                           children: List.generate(value.length, (index) {

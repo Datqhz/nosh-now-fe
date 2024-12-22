@@ -1,21 +1,17 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:management_app/core/constants/global_variable.dart';
-import 'package:management_app/data/repositories/restaurant_repository.dart';
 import 'package:management_app/data/repositories/statistic_repository.dart';
+import 'package:management_app/presentation/wrapper.dart';
 
-class RestaurantDashboardScreen extends StatefulWidget {
-  const RestaurantDashboardScreen({super.key});
+class AdminDashboardScreen extends StatefulWidget {
+  const AdminDashboardScreen({super.key});
 
   @override
-  State<RestaurantDashboardScreen> createState() =>
-      _RestaurantDashboardScreenState();
+  State<AdminDashboardScreen> createState() => _AdminDashboardScreenState();
 }
 
-class _RestaurantDashboardScreenState extends State<RestaurantDashboardScreen> {
-  final ValueNotifier<bool> _isWorking =
-      ValueNotifier(GlobalVariable.profile!.workingStatus);
+class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -46,9 +42,9 @@ class _RestaurantDashboardScreenState extends State<RestaurantDashboardScreen> {
                   const SizedBox(
                     height: 60,
                   ),
-                  Row(
+                  const Row(
                     children: [
-                      const Text(
+                      Text(
                         'Hi ',
                         maxLines: 1,
                         style: TextStyle(
@@ -59,9 +55,9 @@ class _RestaurantDashboardScreenState extends State<RestaurantDashboardScreen> {
                       ),
                       Expanded(
                         child: Text(
-                          GlobalVariable.profile!.displayName,
+                          "Admin",
                           maxLines: 1,
-                          style: const TextStyle(
+                          style: TextStyle(
                               fontSize: 20.0,
                               fontWeight: FontWeight.bold,
                               color: Colors.white,
@@ -71,7 +67,7 @@ class _RestaurantDashboardScreenState extends State<RestaurantDashboardScreen> {
                     ],
                   ),
                   const Text(
-                    'This is some statistic recently',
+                    'This is overview',
                     maxLines: 1,
                     style: TextStyle(
                         fontSize: 20.0,
@@ -84,8 +80,7 @@ class _RestaurantDashboardScreenState extends State<RestaurantDashboardScreen> {
                   ),
                   //revenue month
                   FutureBuilder(
-                      future: StatisticRepository()
-                          .getRestaurantOverview(DateTime.now(), context),
+                      future: StatisticRepository().getAdminOverview(context),
                       builder: (context, snapshot) {
                         if (snapshot.connectionState == ConnectionState.done &&
                             snapshot.hasData) {
@@ -121,7 +116,7 @@ class _RestaurantDashboardScreenState extends State<RestaurantDashboardScreen> {
                                           CrossAxisAlignment.start,
                                       children: [
                                         const Text(
-                                          'Revenue this month',
+                                          'Transactions amount this month',
                                           maxLines: 1,
                                           style: TextStyle(
                                               fontSize: 16.0,
@@ -145,22 +140,6 @@ class _RestaurantDashboardScreenState extends State<RestaurantDashboardScreen> {
                                       ],
                                     ),
                                     const Expanded(child: SizedBox()),
-                                    TextButton(
-                                      onPressed: () {},
-                                      style: TextButton.styleFrom(
-                                          backgroundColor: Colors.blue,
-                                          foregroundColor: Colors.white,
-                                          shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(10))),
-                                      child: const Text(
-                                        'More',
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w400,
-                                        ),
-                                      ),
-                                    )
                                   ],
                                 ),
                               ),
@@ -205,7 +184,7 @@ class _RestaurantDashboardScreenState extends State<RestaurantDashboardScreen> {
                                                   CrossAxisAlignment.start,
                                               children: [
                                                 const Text(
-                                                  'Revenue',
+                                                  'Total',
                                                   maxLines: 1,
                                                   style: TextStyle(
                                                       fontSize: 16.0,
@@ -277,7 +256,7 @@ class _RestaurantDashboardScreenState extends State<RestaurantDashboardScreen> {
                                                 strokeWidth: 6,
                                                 value: snapshot.data!
                                                         .totalSuccessOrder /
-                                                    10,
+                                                    100,
                                                 valueColor:
                                                     const AlwaysStoppedAnimation<
                                                         Color>(Colors.blue),
@@ -303,7 +282,7 @@ class _RestaurantDashboardScreenState extends State<RestaurantDashboardScreen> {
                                                           .ellipsis),
                                                 ),
                                                 const Text(
-                                                  '/10 Orders',
+                                                  '/100 Orders',
                                                   maxLines: 1,
                                                   style: TextStyle(
                                                       fontSize: 14.0,
@@ -328,34 +307,58 @@ class _RestaurantDashboardScreenState extends State<RestaurantDashboardScreen> {
                               Row(
                                 children: [
                                   const Text(
-                                    'Working: ',
+                                    'Total transactions needed transfer: ',
                                     maxLines: 1,
                                     style: TextStyle(
                                         fontSize: 16.0,
                                         fontWeight: FontWeight.w600,
-                                        color: Colors.black,
+                                        color: Color.fromRGBO(49, 49, 49, 1),
                                         overflow: TextOverflow.ellipsis),
                                   ),
-                                  ValueListenableBuilder(
-                                      valueListenable: _isWorking,
-                                      builder: (context, value, child) {
-                                        return Switch(
-                                          value: value,
-                                          activeColor: Colors.red,
-                                          onChanged: (bool value) async {
-                                            var result =
-                                                await RestaurantRepository()
-                                                    .updateWorkingStatus(
-                                                        value, context);
-                                            if (result) {
-                                              _isWorking.value = value;
-                                              GlobalVariable.profile!.workingStatus = value;
-                                            }
-                                          },
-                                        );
-                                      })
+                                  Expanded(
+                                    child: Text(
+                                      snapshot.data!.totalPendingTransactions
+                                          .toString(),
+                                      maxLines: 1,
+                                      style: const TextStyle(
+                                          fontSize: 16.0,
+                                          fontWeight: FontWeight.w400,
+                                          color: Color.fromRGBO(49, 49, 49, 1),
+                                          overflow: TextOverflow.ellipsis),
+                                    ),
+                                  ),
                                 ],
-                              )
+                              ),
+                              const SizedBox(
+                                height: 12,
+                              ),
+                              Row(
+                                children: [
+                                  const Text(
+                                    'Total transactions amount: ',
+                                    maxLines: 1,
+                                    style: TextStyle(
+                                        fontSize: 16.0,
+                                        fontWeight: FontWeight.w600,
+                                        color: Color.fromRGBO(49, 49, 49, 1),
+                                        overflow: TextOverflow.ellipsis),
+                                  ),
+                                  Expanded(
+                                    child: Text(
+                                      NumberFormat.currency(
+                                              locale: 'vi_VN', symbol: '₫')
+                                          .format(snapshot
+                                              .data!.totalPendingAmount),
+                                      maxLines: 1,
+                                      style: const TextStyle(
+                                          fontSize: 16.0,
+                                          fontWeight: FontWeight.w400,
+                                          color: Color.fromRGBO(49, 49, 49, 1),
+                                          overflow: TextOverflow.ellipsis),
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ],
                           );
                         }
@@ -369,12 +372,13 @@ class _RestaurantDashboardScreenState extends State<RestaurantDashboardScreen> {
               left: 20,
               child: GestureDetector(
                 onTap: () {
-                  Scaffold.of(context).openDrawer();
+                  Navigator.pushReplacement(context,
+                      MaterialPageRoute(builder: (context) => const Wrapper()));
                 },
                 child: const Icon(
-                  CupertinoIcons.bars,
-                  size: 22,
-                  color: Colors.white,
+                  Icons.exit_to_app,
+                  size: 26,
+                  color: Colors.red,
                 ),
               ),
             )
